@@ -19,6 +19,8 @@ export default function decorate(block) {
   const steps = findRows(rows, 'Step');
 
   addSectionClass(block, 'scroll-ritual');
+  const section = block.closest('.section');
+  if (section) section.id ||= 'ritual';
   block.dataset.scrollVideo = '';
   block.textContent = '';
 
@@ -45,6 +47,8 @@ export default function decorate(block) {
   if (copy) title.append(createElement('p', { text: copy }));
 
   const stepList = createElement('div', { className: 'ritual-steps' });
+  stepList.setAttribute('role', 'group');
+  stepList.setAttribute('aria-label', 'Cocktail making steps');
   const authoredSteps = steps.length ? steps : [
     ['01', 'Measure the agave', 'Precision first. Character follows.'],
     ['02', 'Shake the night', 'Ice, citrus and movement become texture.'],
@@ -55,23 +59,30 @@ export default function decorate(block) {
     const values = Array.isArray(row)
       ? row
       : [getText(row, 1), getText(row, 2), getText(row, 3)];
-    const article = createElement('article', {
+    const step = createElement('button', {
       className: `ritual-step${index === 0 ? ' is-active' : ''}`,
     });
-    article.dataset.step = index;
+    step.type = 'button';
+    step.dataset.step = index;
+    step.setAttribute('aria-pressed', String(index === 0));
+    step.setAttribute('aria-label', `Step ${values[0]}: ${values[1]}`);
     const body = createElement('div');
     body.append(
       createElement('h3', { text: values[1] }),
       createElement('p', { text: values[2] }),
     );
-    article.append(createElement('span', { text: values[0] }), body);
-    stepList.append(article);
+    step.append(createElement('span', { text: values[0] }), body);
+    stepList.append(step);
   });
 
   const progress = createElement('div', { className: 'ritual-progress' });
   progress.setAttribute('aria-hidden', 'true');
   progress.append(createElement('i'));
-  layout.append(title, stepList);
+  const hint = createElement('p', {
+    className: 'ritual-hint',
+    text: 'Scroll to mix · tap a step',
+  });
+  layout.append(title, stepList, hint);
   sticky.append(video, shade, layout, progress);
   block.append(sticky);
 }

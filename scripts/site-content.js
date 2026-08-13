@@ -40,20 +40,21 @@ function homeMarkup() {
             <h2 id="ritual-title">You scroll.<br><em>We mix.</em></h2>
             <p>Move through the craft from the first measured pour to the final reveal.</p>
           </div>
-          <div class="ritual-steps" aria-live="polite">
-            <article class="ritual-step is-active" data-step="0">
+          <div class="ritual-steps" role="group" aria-label="Cocktail making steps">
+            <button type="button" class="ritual-step is-active" data-step="0" aria-pressed="true" aria-label="Step 01: Measure the agave">
               <span>01</span>
               <div><h3>Measure the agave</h3><p>Precision first. Character follows.</p></div>
-            </article>
-            <article class="ritual-step" data-step="1">
+            </button>
+            <button type="button" class="ritual-step" data-step="1" aria-pressed="false" aria-label="Step 02: Shake the night">
               <span>02</span>
               <div><h3>Shake the night</h3><p>Ice, citrus and movement become texture.</p></div>
-            </article>
-            <article class="ritual-step" data-step="2">
+            </button>
+            <button type="button" class="ritual-step" data-step="2" aria-pressed="false" aria-label="Step 03: Pour the reveal">
               <span>03</span>
               <div><h3>Pour the reveal</h3><p>The final detail is always yours.</p></div>
-            </article>
+            </button>
           </div>
+          <p class="ritual-hint">Scroll to mix · tap a step</p>
         </div>
         <div class="ritual-progress" aria-hidden="true"><i></i></div>
         <a class="media-credit" href="https://www.pexels.com/video/person-making-cocktails-7219892/" target="_blank" rel="noopener noreferrer">Film: ArtHouse Studio / Pexels</a>
@@ -83,14 +84,15 @@ function homeMarkup() {
           <h2 id="collection-title">Signature Cocktails</h2>
         </header>
         <div class="cocktail-gallery">
-          <figure><img src="/media/cocktail-1.png" alt="Rustic cocktail presentation" loading="lazy" width="718" height="652"><figcaption><span>01</span> Smoke &amp; Orchard</figcaption></figure>
-          <figure><img src="/media/cocktail-2.png" alt="Signature cocktail presentation" loading="lazy" width="832" height="822"><figcaption><span>02</span> Golden Hour</figcaption></figure>
-          <figure><img src="/media/cocktail-3.jpeg" alt="Classic cocktail presentation" loading="lazy" width="1206" height="1760"><figcaption><span>03</span> After Midnight</figcaption></figure>
+          <figure><button type="button" class="cocktail-card" data-cocktail-zoom aria-label="View Smoke &amp; Orchard"><img src="/media/cocktail-1.png" alt="Rustic cocktail presentation" loading="lazy" width="718" height="652"><figcaption><span>01</span> Smoke &amp; Orchard</figcaption></button></figure>
+          <figure><button type="button" class="cocktail-card" data-cocktail-zoom aria-label="View Golden Hour"><img src="/media/cocktail-2.png" alt="Signature cocktail presentation" loading="lazy" width="832" height="822"><figcaption><span>02</span> Golden Hour</figcaption></button></figure>
+          <figure><button type="button" class="cocktail-card" data-cocktail-zoom aria-label="View After Midnight"><img src="/media/cocktail-3.jpeg" alt="Classic cocktail presentation" loading="lazy" width="1206" height="1760"><figcaption><span>03</span> After Midnight</figcaption></button></figure>
         </div>
         <div class="collection-footer">
           <p>Our mixologists craft bespoke drinks tailored to your exact palate. Ask about our off-menu creations.</p>
           <a class="button button-outline" href="/menu/">Explore Full Menu</a>
         </div>
+        <dialog class="cocktail-dialog" aria-label="Cocktail detail"><button type="button" class="dialog-close" aria-label="Close cocktail detail">×</button><button type="button" class="cocktail-dialog-nav previous" aria-label="Previous cocktail">←</button><img alt=""><p class="cocktail-dialog-caption"></p><button type="button" class="cocktail-dialog-nav next" aria-label="Next cocktail">→</button></dialog>
       </div>
     </section>
 
@@ -103,9 +105,9 @@ function homeMarkup() {
           <a class="button" href="/contact/">Plan Your Event</a>
         </div>
         <ul class="event-list" aria-label="Private event options">
-          <li><span>01</span><strong>Bespoke Mixology</strong><small>A menu shaped around your guests.</small></li>
-          <li><span>02</span><strong>Private Buyouts</strong><small>The hidden room, entirely yours.</small></li>
-          <li><span>03</span><strong>Masterclasses</strong><small>Learn the craft behind the bar.</small></li>
+          <li><button type="button" class="event-option" data-event-option aria-expanded="true"><span>01</span><strong>Bespoke Mixology</strong><i>+</i></button><small>A menu shaped around your guests.</small></li>
+          <li><button type="button" class="event-option" data-event-option aria-expanded="false"><span>02</span><strong>Private Buyouts</strong><i>+</i></button><small hidden>The hidden room, entirely yours.</small></li>
+          <li><button type="button" class="event-option" data-event-option aria-expanded="false"><span>03</span><strong>Masterclasses</strong><i>+</i></button><small hidden>Learn the craft behind the bar.</small></li>
         </ul>
       </div>
     </section>
@@ -196,6 +198,9 @@ function initScrollVideo(root) {
   const video = section.querySelector('video');
   const steps = [...section.querySelectorAll('[data-step]')];
   let frame;
+  let desiredTime = 0;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const render = () => {
     frame = null;
@@ -204,12 +209,20 @@ function initScrollVideo(root) {
     section.style.setProperty('--scroll-progress', progress);
 
     if (video.duration && Number.isFinite(video.duration)) {
-      const target = progress * Math.max(video.duration - 0.08, 0);
-      if (Math.abs(video.currentTime - target) > 0.04) video.currentTime = target;
+      desiredTime = progress * Math.max(video.duration - 0.08, 0);
+      const delta = desiredTime - video.currentTime;
+      if (Math.abs(delta) > 0.025) {
+        video.currentTime += reducedMotion ? delta : delta * 0.32;
+        frame = window.requestAnimationFrame(render);
+      }
     }
 
     const active = Math.min(steps.length - 1, Math.floor(progress * steps.length));
-    steps.forEach((step, index) => step.classList.toggle('is-active', index === active));
+    steps.forEach((step, index) => {
+      const isActive = index === active;
+      step.classList.toggle('is-active', isActive);
+      step.setAttribute('aria-pressed', String(isActive));
+    });
   };
 
   const requestRender = () => {
@@ -219,7 +232,66 @@ function initScrollVideo(root) {
   video.addEventListener('loadedmetadata', render);
   window.addEventListener('scroll', requestRender, { passive: true });
   window.addEventListener('resize', requestRender);
+  steps.forEach((step, index) => {
+    step.addEventListener('click', () => {
+      const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
+      const sectionTop = window.scrollY + section.getBoundingClientRect().top;
+      const progress = (index + 0.5) / Math.max(steps.length, 1);
+      window.scrollTo({
+        top: sectionTop + (progress * travel),
+        behavior: reducedMotion ? 'auto' : 'smooth',
+      });
+    });
+  });
   render();
+}
+
+function initCollection(root) {
+  root.querySelectorAll('.collection').forEach((collection) => {
+    const cards = [...collection.querySelectorAll('[data-cocktail-zoom]')];
+    const dialog = collection.querySelector('.cocktail-dialog');
+    const dialogImage = dialog?.querySelector('img');
+    const dialogCaption = dialog?.querySelector('.cocktail-dialog-caption');
+    if (!cards.length || !dialog || !dialogImage || !dialogCaption) return;
+    let activeIndex = 0;
+
+    const showCocktail = (index) => {
+      activeIndex = (index + cards.length) % cards.length;
+      const card = cards[activeIndex];
+      const image = card.querySelector('img');
+      dialogImage.src = image?.currentSrc || image?.src || '';
+      dialogImage.alt = image?.alt || '';
+      dialogCaption.textContent = card.querySelector('figcaption')?.textContent?.trim() || '';
+    };
+
+    cards.forEach((card, index) => card.addEventListener('click', () => {
+      showCocktail(index);
+      dialog.showModal();
+    }));
+    dialog.querySelector('.dialog-close')?.addEventListener('click', () => dialog.close());
+    dialog.querySelector('.previous')?.addEventListener('click', () => showCocktail(activeIndex - 1));
+    dialog.querySelector('.next')?.addEventListener('click', () => showCocktail(activeIndex + 1));
+    dialog.addEventListener('click', (event) => { if (event.target === dialog) dialog.close(); });
+    dialog.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowLeft') showCocktail(activeIndex - 1);
+      if (event.key === 'ArrowRight') showCocktail(activeIndex + 1);
+    });
+  });
+}
+
+function initEvents(root) {
+  root.querySelectorAll('.event-list:not([data-event-list-ready])').forEach((list) => {
+    const options = [...list.querySelectorAll('[data-event-option]')];
+    options.forEach((option) => option.addEventListener('click', () => {
+      const willOpen = option.getAttribute('aria-expanded') !== 'true';
+      options.forEach((item) => {
+        const isOpen = item === option && willOpen;
+        item.setAttribute('aria-expanded', String(isOpen));
+        const detail = item.closest('li')?.querySelector('small');
+        if (detail) detail.hidden = !isOpen;
+      });
+    }));
+  });
 }
 
 function initMenu(root) {
@@ -236,6 +308,17 @@ function initMenu(root) {
   };
 
   tabs.forEach((tab) => tab.addEventListener('click', () => selectTab(tab)));
+  tabs.forEach((tab, index) => tab.addEventListener('keydown', (event) => {
+    let nextIndex;
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+    if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+    if (event.key === 'Home') nextIndex = 0;
+    if (event.key === 'End') nextIndex = tabs.length - 1;
+    if (nextIndex === undefined) return;
+    event.preventDefault();
+    selectTab(tabs[nextIndex]);
+    tabs[nextIndex].focus();
+  }));
   root.querySelectorAll('[data-menu-zoom]').forEach((button) => {
     button.addEventListener('click', () => {
       const image = dialog?.querySelector('img');
@@ -251,5 +334,7 @@ function initMenu(root) {
 
 export function initSiteExperience(root) {
   initScrollVideo(root);
+  initCollection(root);
+  initEvents(root);
   initMenu(root);
 }

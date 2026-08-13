@@ -4,9 +4,31 @@ The AEM content root is the Google Drive folder configured in `fstab.yaml`.
 The root contains the page documents `index`, `menu`, and `contact`, plus the
 shared fragments `nav` and `footer`.
 
-Static media values use paths such as `/media/hero-image.jpeg`. The blocks turn
-those paths into images and video, so editors do not need to upload duplicate
-copies into every document.
+## Phone-friendly image authoring
+
+Photos do not need to go through GitHub. In the Google Docs mobile app, open the
+page document, tap the image cell in the relevant block, and use **Insert →
+Image → Photos** (or **Camera**). The site accepts a directly inserted image in
+every `Image`, `Poster`, `Cocktail`, and `Menu` row.
+
+For the best result:
+
+1. Insert one image per image cell and remove the old path or image first.
+2. Use portrait photos for cocktails and people, and landscape photos for the
+   hero or menu artwork.
+3. Keep each image below 10 MB so AEM can preview it successfully.
+4. Add concise alt text in Google Docs when the mobile app exposes that option;
+   otherwise add it later from desktop for accessibility.
+5. Keep the first-column labels (`Image`, `Cocktail`, and so on) unchanged.
+
+Repository paths such as `/media/hero-image.jpeg` remain supported as a fallback.
+Video is the exception: `Scroll Ritual` currently expects a published MP4 URL
+or `/media/cocktail-making.mp4`, because Google Docs image insertion does not
+upload video for scroll scrubbing.
+
+Editing copy and inserting images is fully phone-friendly. Previewing and
+publishing still uses the AEM Sidekick workflow described below, so keep a
+Sidekick-capable browser available for that final step.
 
 ## `index`
 
@@ -19,7 +41,7 @@ copies into every document.
 | Copy | Barcelona's premier speakeasy in the heart of El Raval. Step behind the curtain for unforgettable nights, rare ingredients, and masterful mixology. | |
 | Action | Book Your Table | /contact/ |
 | Action | View Menu | /menu/ |
-| Image | /media/hero-image.jpeg | |
+| Image | Insert a landscape photo here, or use `/media/hero-image.jpeg` | |
 | Scroll Label | Discover | |
 
 ### Scroll Ritual
@@ -30,7 +52,7 @@ copies into every document.
 | Heading | You scroll. We mix. | | |
 | Copy | Move through the craft from the first measured pour to the final reveal. | | |
 | Video | /media/cocktail-making.mp4 | | |
-| Poster | /media/cocktail-craft.png | | |
+| Poster | Insert a landscape photo here, or use `/media/cocktail-craft.png` | | |
 | Step | 01 | Measure the agave | Precision first. Character follows. |
 | Step | 02 | Shake the night | Ice, citrus and movement become texture. |
 | Step | 03 | Pour the reveal | The final detail is always yours. |
@@ -39,7 +61,7 @@ copies into every document.
 
 | Philosophy | | |
 | --- | --- | --- |
-| Image | /media/cocktail-craft.png | |
+| Image | Insert a portrait photo here, or use `/media/cocktail-craft.png` | |
 | Caption | Every pour is a performance. | |
 | Eyebrow | Our Philosophy | |
 | Heading | The Alchemy of Taste & Time | |
@@ -53,9 +75,9 @@ copies into every document.
 | --- | --- | --- |
 | Eyebrow | The Collection | |
 | Heading | Signature Cocktails | |
-| Cocktail | /media/cocktail-1.png | Smoke & Orchard |
-| Cocktail | /media/cocktail-2.png | Golden Hour |
-| Cocktail | /media/cocktail-3.jpeg | After Midnight |
+| Cocktail | Insert a cocktail photo, or use `/media/cocktail-1.png` | Smoke & Orchard |
+| Cocktail | Insert a cocktail photo, or use `/media/cocktail-2.png` | Golden Hour |
+| Cocktail | Insert a cocktail photo, or use `/media/cocktail-3.jpeg` | After Midnight |
 | Copy | Our mixologists craft bespoke drinks tailored to your exact palate. Ask about our off-menu creations. | |
 | Action | Explore Full Menu | /menu/ |
 
@@ -82,7 +104,7 @@ copies into every document.
 | Detail | Open | Sun–Thu 20:00–02:00 · Fri 20:00–03:00 · Sat 20:00–02:00 |
 | Action | Get Directions | https://maps.app.goo.gl/PwqVrGvxxgDSQeHF8 |
 | Action | Call the Bar | tel:+34602127026 |
-| Image | /media/miguel.jpeg | |
+| Image | Insert a portrait photo here, or use `/media/miguel.jpeg` | |
 | Caption | Look for the Fresh Juice sign. | |
 
 ## `menu`
@@ -95,8 +117,8 @@ copies into every document.
 
 | Menu Viewer | | |
 | --- | --- | --- |
-| Menu | Cocktails | /media/menu-cocktails.png |
-| Menu | Fresh Juice | /media/menu-juice.png |
+| Menu | Cocktails | Insert the menu image, or use `/media/menu-cocktails.png` |
+| Menu | Fresh Juice | Insert the menu image, or use `/media/menu-juice.png` |
 
 ## `contact`
 
@@ -110,13 +132,13 @@ copies into every document.
 | Detail | Hours of Operation | Sun–Thu 20:00–02:00 · Friday 20:00–03:00 · Saturday 20:00–02:00 |
 | Action | Call to Reserve | tel:+34602127026 |
 | Action | Get Directions | https://maps.app.goo.gl/PwqVrGvxxgDSQeHF8 |
-| Image | /media/miguel.jpeg | |
+| Image | Insert a portrait photo here, or use `/media/miguel.jpeg` | |
 | Caption | Look for this sign | |
 
 ## Metadata
 
 Each page ends with a Metadata block containing `Title`, `Description`, `Lang`
-(`en`), and `Image` (`/media/hero-image.jpeg`).
+(`en`), and `Image` (a directly inserted image or `/media/hero-image.jpeg`).
 
 ## `nav`
 

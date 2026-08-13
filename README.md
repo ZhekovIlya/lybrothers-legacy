@@ -50,7 +50,7 @@ npm run lint
 4. Confirm the AEM Code Sync GitHub App is installed for the repository.
 5. Keep native Google Docs named `index`, `menu`, `contact`, `nav`, and `footer` in the Drive root.
 
-Use a horizontal rule to place each visual section in its own AEM section. Blocks that support repository media accept paths under `/media/`; other images can be inserted directly into Google Docs with useful alt text.
+Use a horizontal rule to place each visual section in its own AEM section. Images can be inserted directly into the block tables from the Google Docs mobile app, so routine photo updates do not require GitHub. Repository paths under `/media/` remain supported, and the scroll-scrub video still uses a published MP4 path. See the phone workflow in [`docs/google-docs-authoring.md`](docs/google-docs-authoring.md).
 
 ## Preview and publish
 

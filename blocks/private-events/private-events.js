@@ -28,12 +28,32 @@ export default function decorate(block) {
   list.setAttribute('aria-label', 'Private event options');
   findRows(rows, 'Option').forEach((row, index) => {
     const item = createElement('li');
-    item.append(
+    const button = createElement('button', { className: 'event-option' });
+    button.type = 'button';
+    button.dataset.eventOption = '';
+    button.setAttribute('aria-expanded', String(index === 0));
+    button.append(
       createElement('span', { text: String(index + 1).padStart(2, '0') }),
       createElement('strong', { text: getText(row, 1) }),
-      createElement('small', { text: getText(row, 2) }),
+      createElement('i', { text: '+' }),
     );
+    const detail = createElement('small', { text: getText(row, 2) });
+    detail.hidden = index !== 0;
+    item.append(button, detail);
     list.append(item);
   });
   block.append(content, list);
+  list.dataset.eventListReady = '';
+  const options = [...list.querySelectorAll('[data-event-option]')];
+  block.addEventListener('click', (event) => {
+    const option = event.target.closest('[data-event-option]');
+    if (!option) return;
+    const willOpen = option.getAttribute('aria-expanded') !== 'true';
+    options.forEach((item) => {
+      const isOpen = item === option && willOpen;
+      item.setAttribute('aria-expanded', String(isOpen));
+      const detail = item.closest('li')?.querySelector('small');
+      if (detail) detail.hidden = !isOpen;
+    });
+  });
 }

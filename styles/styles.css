@@ -320,6 +320,15 @@ a.button.button-outline:focus-visible {
   isolation: isolate;
 }
 
+main > .section.home-hero {
+  padding: 0 0 4rem;
+}
+
+main > .section.home-hero > .home-hero-backdrop {
+  max-width: none;
+  margin: 0;
+}
+
 .home-hero-backdrop {
   position: absolute;
   z-index: -2;
@@ -402,6 +411,15 @@ a.button.button-outline:focus-visible {
   background: #050505;
 }
 
+main > .section.scroll-ritual {
+  padding: 0;
+}
+
+main > .section.scroll-ritual > .ritual-sticky {
+  max-width: none;
+  margin: 0;
+}
+
 .ritual-sticky {
   position: sticky;
   top: 0;
@@ -459,14 +477,26 @@ a.button.button-outline:focus-visible {
   grid-template-columns: 2rem 1fr;
   gap: 1rem;
   align-items: start;
+  width: 100%;
+  min-height: 0;
   padding: 0.8rem 0;
+  border: 0;
   border-top: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-cream);
+  text-align: left;
   opacity: 0.36;
   transform: translateX(0.5rem);
-  transition: opacity 300ms ease, transform 300ms ease;
+  transition: opacity 300ms ease, transform 300ms ease, border-color 300ms ease;
 }
 
+.ritual-step:hover,
+.ritual-step:focus-visible,
 .ritual-step.is-active {
+  border-color: var(--color-gold-light);
+  background: transparent;
+  color: var(--color-cream);
   opacity: 1;
   transform: none;
 }
@@ -490,6 +520,20 @@ a.button.button-outline:focus-visible {
 .ritual-step p {
   color: #d1c5b6;
   font-size: 0.83rem;
+}
+
+.ritual-hint {
+  position: absolute;
+  right: 0;
+  bottom: 2.2rem;
+  left: 0;
+  margin: 0;
+  color: rgb(255 255 255 / 58%);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-align: center;
+  text-transform: uppercase;
 }
 
 .ritual-progress {
@@ -605,6 +649,27 @@ a.button.button-outline:focus-visible {
   background: var(--color-charcoal);
 }
 
+.cocktail-card {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  width: 100%;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-cream);
+  text-align: left;
+}
+
+.cocktail-card:hover,
+.cocktail-card:focus-visible {
+  border: 0;
+  background: transparent;
+  color: var(--color-cream);
+}
+
 .cocktail-gallery img {
   width: 100%;
   aspect-ratio: 4 / 5;
@@ -612,7 +677,8 @@ a.button.button-outline:focus-visible {
   transition: transform 700ms cubic-bezier(0.2, 0.65, 0.2, 1);
 }
 
-.cocktail-gallery figure:hover img {
+.cocktail-gallery figure:hover img,
+.cocktail-card:focus-visible img {
   transform: scale(1.035);
 }
 
@@ -636,6 +702,101 @@ a.button.button-outline:focus-visible {
   font-size: 0.65rem;
 }
 
+.cocktail-card::after {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  display: grid;
+  width: 2.35rem;
+  height: 2.35rem;
+  border: 1px solid rgb(255 255 255 / 35%);
+  border-radius: 50%;
+  background: rgb(5 5 5 / 40%);
+  color: var(--color-white);
+  content: "+";
+  font-size: 1.25rem;
+  font-weight: 300;
+  line-height: 1;
+  place-items: center;
+  transition: background-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.cocktail-card:hover::after,
+.cocktail-card:focus-visible::after {
+  background: var(--color-gold);
+  color: var(--color-black);
+  transform: rotate(90deg);
+}
+
+.cocktail-dialog {
+  width: min(94vw, 62rem);
+  max-width: none;
+  max-height: 94svh;
+  padding: 0;
+  border: 1px solid rgb(228 195 122 / 40%);
+  background: #080706;
+  color: var(--color-cream);
+  box-shadow: 0 2rem 8rem rgb(0 0 0 / 75%);
+}
+
+.cocktail-dialog::backdrop {
+  background: rgb(0 0 0 / 88%);
+  backdrop-filter: blur(0.5rem);
+}
+
+.cocktail-dialog img {
+  width: 100%;
+  max-height: min(78svh, 52rem);
+  object-fit: contain;
+}
+
+.cocktail-dialog-caption {
+  margin: 0;
+  padding: 1rem 4rem;
+  color: var(--color-cream);
+  font-family: var(--font-heading);
+  font-size: clamp(1.2rem, 3vw, 1.8rem);
+  text-align: center;
+}
+
+.cocktail-dialog .dialog-close {
+  position: absolute;
+  z-index: 2;
+  top: 0.75rem;
+  right: 0.75rem;
+  border-radius: 50%;
+  background: rgb(5 5 5 / 72%);
+  color: var(--color-cream);
+}
+
+.cocktail-dialog .dialog-close:hover,
+.cocktail-dialog .dialog-close:focus-visible {
+  border-color: var(--color-gold-light);
+  background: rgb(5 5 5 / 88%);
+  color: var(--color-white);
+}
+
+.cocktail-dialog-nav {
+  position: absolute;
+  z-index: 2;
+  top: 50%;
+  width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0;
+  border-color: rgb(255 255 255 / 38%);
+  background: rgb(5 5 5 / 64%);
+  color: var(--color-white);
+  transform: translateY(-50%);
+}
+
+.cocktail-dialog-nav.previous {
+  left: 0.75rem;
+}
+
+.cocktail-dialog-nav.next {
+  right: 0.75rem;
+}
+
 .collection-footer {
   display: flex;
   flex-wrap: wrap;
@@ -653,13 +814,13 @@ a.button.button-outline:focus-visible {
   color: var(--color-muted);
 }
 
-.private-events {
+main > .section.private-events {
   position: relative;
   overflow: hidden;
   background: linear-gradient(120deg, #20130e, #0c0a09 60%);
 }
 
-.private-events::before {
+main > .section.private-events::before {
   position: absolute;
   top: -12rem;
   right: -10rem;
@@ -693,20 +854,34 @@ a.button.button-outline:focus-visible {
 }
 
 .event-list li {
-  display: grid;
-  grid-template-columns: 2rem 1fr;
-  padding: 1.5rem 0;
+  padding: 0;
   border-top: 1px solid var(--border-color);
 }
 
-.event-list li > span {
-  color: var(--color-gold-light);
-  font-size: 0.68rem;
+.event-option {
+  display: grid;
+  grid-template-columns: 2rem 1fr auto;
+  gap: 0.5rem;
+  width: 100%;
+  min-height: 0;
+  padding: 1.5rem 0 1rem;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--color-cream);
+  text-align: left;
 }
 
-.event-list strong,
-.event-list small {
-  grid-column: 2;
+.event-option:hover,
+.event-option:focus-visible {
+  border: 0;
+  background: transparent;
+  color: var(--color-gold-light);
+}
+
+.event-option > span {
+  color: var(--color-gold-light);
+  font-size: 0.68rem;
 }
 
 .event-list strong {
@@ -715,8 +890,26 @@ a.button.button-outline:focus-visible {
   font-size: 1.5rem;
 }
 
+.event-option i {
+  color: var(--color-gold-light);
+  font-size: 1.35rem;
+  font-style: normal;
+  font-weight: 300;
+  transition: transform 240ms ease;
+}
+
+.event-option[aria-expanded="true"] i {
+  transform: rotate(45deg);
+}
+
 .event-list small {
+  display: block;
+  padding: 0.35rem 2.5rem 1.5rem;
   color: var(--color-muted);
+}
+
+.event-list small[hidden] {
+  display: none;
 }
 
 .door-image img {
@@ -769,6 +962,10 @@ a.button.button-outline:focus-visible {
   padding: 12rem 1.25rem 5rem;
   background: radial-gradient(circle at 50% 0%, rgb(201 154 74 / 20%), transparent 34rem), #0b0a09;
   text-align: center;
+}
+
+main > .section.page-intro {
+  padding: 12rem 1.25rem 5rem;
 }
 
 .page-intro::after {
@@ -881,6 +1078,10 @@ a.button.button-outline:focus-visible {
   background: radial-gradient(circle at 10% 10%, rgb(201 154 74 / 12%), transparent 28rem), #0b0a09;
 }
 
+main > .section.contact-page {
+  padding: 11rem 1.25rem 6rem;
+}
+
 .contact-grid {
   display: grid;
   gap: clamp(3rem, 8vw, 7rem);
@@ -972,7 +1173,9 @@ a.button.button-outline:focus-visible {
   }
 
   .ritual-layout {
-    padding-top: 6.5rem;
+    align-content: normal;
+    gap: 1.5rem;
+    padding-block: 5.5rem 4.5rem;
   }
 
   .ritual-heading > p:last-child {
@@ -981,10 +1184,29 @@ a.button.button-outline:focus-visible {
 
   .ritual-steps {
     width: 100%;
+    margin-top: auto;
   }
 
-  .ritual-step:not(.is-active) {
+  .ritual-hint {
+    bottom: 1.25rem;
+  }
+
+  .ritual-step {
+    padding-block: 0.55rem;
+  }
+
+  .ritual-step:not(.is-active) p {
     display: none;
+  }
+
+  .ritual-progress {
+    bottom: 0.75rem;
+  }
+
+  .media-credit {
+    top: 0.75rem;
+    right: 1rem;
+    bottom: auto;
   }
 
   .visit-details div,
