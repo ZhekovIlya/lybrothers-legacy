@@ -43,6 +43,10 @@ html {
   scroll-behavior: smooth;
 }
 
+[id] {
+  scroll-margin-top: calc(var(--nav-height, 0px) + var(--spacing-s));
+}
+
 body {
   display: none;
   margin: 0;

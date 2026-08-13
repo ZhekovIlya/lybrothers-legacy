@@ -71,7 +71,7 @@ export function decorateMain(main) {
 }
 
 async function loadEager(doc) {
-  document.documentElement.lang = getMetadata('lang') || 'en';
+  document.documentElement.lang = getMetadata('lang') || 'es';
   decorateTemplateAndTheme();
 
   const main = doc.querySelector('main');
