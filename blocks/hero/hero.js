@@ -19,6 +19,9 @@ export default function decorate(block) {
   const picture = labelled
     ? getPicture(findRow(rows, 'Image'))
     : rows.map((row) => getPicture(row, 0)).find(Boolean);
+  const videoSrc = labelled
+    ? getHref(findRow(rows, 'Video')) || '/media/hero-ice-loop.mp4'
+    : '/media/hero-ice-loop.mp4';
   const actions = labelled ? findRows(rows, 'Action') : rows.slice(3, 5);
 
   addSectionClass(block, 'home-hero');
@@ -27,6 +30,20 @@ export default function decorate(block) {
 
   const backdrop = createElement('div', { className: 'home-hero-backdrop' });
   backdrop.setAttribute('aria-hidden', 'true');
+  const video = createElement('video', { className: 'home-hero-video' });
+  video.autoplay = true;
+  video.loop = true;
+  video.muted = true;
+  video.playsInline = true;
+  video.preload = 'auto';
+  video.setAttribute('aria-hidden', 'true');
+  const posterImage = picture?.querySelector?.('img') || (picture?.tagName === 'IMG' ? picture : null);
+  if (posterImage?.src) video.poster = posterImage.src;
+  const source = createElement('source');
+  source.src = videoSrc;
+  source.type = 'video/mp4';
+  video.append(source);
+  backdrop.append(video);
   if (picture) backdrop.append(picture);
 
   const content = createElement('div', { className: 'site-shell home-hero-content' });
@@ -51,5 +68,12 @@ export default function decorate(block) {
     }),
     createElement('i'),
   );
-  block.append(backdrop, content, cue);
+  const credit = createElement('a', {
+    className: 'hero-media-credit',
+    text: 'Film: binary Ego / Pexels',
+  });
+  credit.href = 'https://www.pexels.com/video/a-barman-placing-a-glass-with-ice-cubes-on-the-counter-14058813/';
+  credit.target = '_blank';
+  credit.rel = 'noopener noreferrer';
+  block.append(backdrop, content, cue, credit);
 }

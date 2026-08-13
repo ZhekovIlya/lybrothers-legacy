@@ -339,6 +339,37 @@ main > .section.home-hero > .home-hero-backdrop {
   transform: scale(1.025);
 }
 
+.home-hero-backdrop picture,
+.home-hero-backdrop > img,
+.home-hero-video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-hero-backdrop picture,
+.home-hero-backdrop > img {
+  z-index: 0;
+}
+
+.home-hero-backdrop picture img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-hero-video {
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.home-hero.is-video-ready .home-hero-video {
+  opacity: 1;
+}
+
 .home-hero::before {
   position: absolute;
   z-index: -1;
@@ -373,6 +404,18 @@ main > .section.home-hero > .home-hero-backdrop {
   margin-top: 2rem;
 }
 
+.hero-media-credit {
+  position: absolute;
+  right: 1.25rem;
+  bottom: 1rem;
+  z-index: 2;
+  color: rgb(255 255 255 / 48%);
+  font-size: 0.55rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
 .scroll-cue {
   position: absolute;
   bottom: 2rem;
@@ -403,12 +446,23 @@ main > .section.home-hero > .home-hero-backdrop {
 
 .scroll-ritual {
   --scroll-progress: 0;
+  --scroll-target: 0;
 
   position: relative;
-  height: 420vh;
+  height: 480vh;
   margin: 0;
   padding: 0;
   background: #050505;
+}
+
+.ritual-snap-point {
+  position: absolute;
+  left: 50%;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+  scroll-snap-align: center;
+  scroll-snap-stop: always;
 }
 
 main > .section.scroll-ritual {
@@ -1168,6 +1222,27 @@ main > .section.contact-page {
 }
 
 @media (width < 600px) {
+  html.has-ritual-snap {
+    scroll-snap-type: y proximity;
+  }
+
+  .scroll-ritual {
+    height: 620vh;
+  }
+
+  .ritual-snap-entry,
+  .ritual-snap-exit {
+    scroll-snap-stop: always;
+  }
+
+  .ritual-snap-entry {
+    scroll-snap-align: end;
+  }
+
+  .ritual-snap-exit {
+    scroll-snap-align: start;
+  }
+
   .home-hero::before {
     background: linear-gradient(0deg, #080807 0%, rgb(5 5 5 / 25%) 55%, rgb(5 5 5 / 78%) 100%);
   }
@@ -1207,6 +1282,12 @@ main > .section.contact-page {
     top: 0.75rem;
     right: 1rem;
     bottom: auto;
+  }
+
+  .hero-media-credit {
+    right: 0.75rem;
+    bottom: 0.5rem;
+    font-size: 0.5rem;
   }
 
   .visit-details div,

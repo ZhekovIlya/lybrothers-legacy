@@ -22,9 +22,20 @@ For the best result:
 5. Keep the first-column labels (`Image`, `Cocktail`, and so on) unchanged.
 
 Repository paths such as `/media/hero-image.jpeg` remain supported as a fallback.
-Video is the exception: `Scroll Ritual` currently expects a published MP4 URL
-or `/media/cocktail-making.mp4`, because Google Docs image insertion does not
-upload video for scroll scrubbing.
+
+### Phone-friendly video replacement
+
+Videos live in Google Drive beside the page documents rather than inside a
+Google Doc. From Drive, upload the MP4, select it, and use AEM Sidekick to
+**Preview** and then **Publish** the media file. Copy its resulting site URL or
+path into the `Video` row of the Hero or Scroll Ritual table. This can all be
+done from a phone browser that supports Sidekick; the Google Docs app alone can
+edit the URL but cannot publish the MP4.
+
+Keep hero loops short, silent, landscape, and preferably below 8 MB. Scroll
+videos should be landscape MP4 files with frequent keyframes; clips around
+8â€“15 seconds give the smoothest frame-by-frame result. The `Image` or `Poster`
+row remains the fallback while video loads or when a device blocks playback.
 
 Editing copy and inserting images is fully phone-friendly. Previewing and
 publishing still uses the AEM Sidekick workflow described below, so keep a
@@ -41,6 +52,7 @@ Sidekick-capable browser available for that final step.
 | Copy | Barcelona's premier speakeasy in the heart of El Raval. Step behind the curtain for unforgettable nights, rare ingredients, and masterful mixology. | |
 | Action | Book Your Table | /contact/ |
 | Action | View Menu | /menu/ |
+| Video | `/media/hero-ice-loop.mp4` | |
 | Image | Insert a landscape photo here, or use `/media/hero-image.jpeg` | |
 | Scroll Label | Discover | |
 

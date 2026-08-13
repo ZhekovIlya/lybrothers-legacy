@@ -15,7 +15,11 @@ function siteHeader(title, eyebrow, copy) {
 function homeMarkup() {
   return `
     <section class="section home-hero" data-section-status="loaded" aria-labelledby="home-title">
-      <div class="home-hero-backdrop" aria-hidden="true"></div>
+      <div class="home-hero-backdrop" aria-hidden="true">
+        <video class="home-hero-video" autoplay loop muted playsinline preload="auto" poster="/media/hero-image.jpeg" aria-hidden="true">
+          <source src="/media/hero-ice-loop.mp4" type="video/mp4">
+        </video>
+      </div>
       <div class="site-shell home-hero-content">
         <p class="eyebrow">Barcelona · El Raval</p>
         <h1 id="home-title">A Hidden World of <em>Artisanal Spirits</em></h1>
@@ -26,6 +30,7 @@ function homeMarkup() {
         </p>
       </div>
       <a class="scroll-cue" href="#ritual"><span>Discover</span><i aria-hidden="true"></i></a>
+      <a class="hero-media-credit" href="https://www.pexels.com/video/a-barman-placing-a-glass-with-ice-cubes-on-the-counter-14058813/" target="_blank" rel="noopener noreferrer">Film: binary Ego / Pexels</a>
     </section>
 
     <section id="ritual" class="section scroll-ritual" data-section-status="loaded" data-scroll-video aria-labelledby="ritual-title">
@@ -197,53 +202,175 @@ function initScrollVideo(root) {
 
   const video = section.querySelector('video');
   const steps = [...section.querySelectorAll('[data-step]')];
+  const track = section.closest('.section') || section;
   let frame;
-  let desiredTime = 0;
+  let targetFrame = 0;
+  let displayedFrame = 0;
+  let lastSeekAt = 0;
+  let snappedIndex = -1;
+  let snapping = false;
+  let touchStartY;
+  let snapReleaseTimer;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mobile = window.matchMedia('(width < 600px)');
+  const frameRate = 24;
 
-  const render = () => {
+  track.previousElementSibling?.classList.add('ritual-snap-entry');
+  track.nextElementSibling?.classList.add('ritual-snap-exit');
+
+  const snapPoints = steps.map((_, index) => {
+    const point = document.createElement('i');
+    point.className = 'ritual-snap-point';
+    point.setAttribute('aria-hidden', 'true');
+    point.dataset.snapStep = index;
+    section.append(point);
+    return point;
+  });
+
+  const syncSnapPoints = () => {
+    const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
+    snapPoints.forEach((point, index) => {
+      const progress = (index + 0.5) / Math.max(steps.length, 1);
+      point.style.top = `${(progress * travel) + (window.innerHeight / 2)}px`;
+    });
+    document.documentElement.classList.toggle('has-ritual-snap', mobile.matches);
+  };
+
+  const isRitualActive = () => {
+    const bounds = section.getBoundingClientRect();
+    return bounds.top <= window.innerHeight * 0.5 && bounds.bottom >= window.innerHeight * 0.5;
+  };
+
+  const scrollToStep = (index, behavior = 'smooth') => {
+    const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
+    const sectionTop = window.scrollY + section.getBoundingClientRect().top;
+    const progress = (index + 0.5) / Math.max(steps.length, 1);
+    snappedIndex = index;
+    snapping = true;
+    window.clearTimeout(snapReleaseTimer);
+    window.scrollTo({
+      top: sectionTop + (progress * travel),
+      behavior: reducedMotion ? 'auto' : behavior,
+    });
+    snapReleaseTimer = window.setTimeout(() => { snapping = false; }, 850);
+  };
+
+  const advanceMobileChapter = (direction) => {
+    if (!mobile.matches || !isRitualActive()) return false;
+    if (snapping) return true;
+    const leavingStart = direction < 0 && snappedIndex <= 0;
+    const leavingEnd = direction > 0 && snappedIndex >= steps.length - 1;
+    if (leavingStart || leavingEnd) {
+      const sectionTop = window.scrollY + section.getBoundingClientRect().top;
+      snappedIndex = direction > 0 ? steps.length : -1;
+      snapping = true;
+      window.clearTimeout(snapReleaseTimer);
+      window.scrollTo({
+        top: direction > 0
+          ? sectionTop + track.offsetHeight - window.innerHeight + 1
+          : Math.max(0, sectionTop - window.innerHeight),
+        behavior: reducedMotion ? 'auto' : 'smooth',
+      });
+      snapReleaseTimer = window.setTimeout(() => { snapping = false; }, 850);
+      return true;
+    }
+    let nextIndex = Math.max(0, Math.min(steps.length - 1, snappedIndex + direction));
+    if (snappedIndex < 0) nextIndex = direction > 0 ? 0 : steps.length - 1;
+    scrollToStep(nextIndex);
+    return true;
+  };
+
+  const render = (now = performance.now()) => {
     frame = null;
     const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
-    const progress = Math.max(0, Math.min(1, -section.getBoundingClientRect().top / travel));
-    section.style.setProperty('--scroll-progress', progress);
+    const scrollProgress = Math.max(0, Math.min(1, -section.getBoundingClientRect().top / travel));
+    section.style.setProperty('--scroll-target', scrollProgress);
 
     if (video.duration && Number.isFinite(video.duration)) {
-      desiredTime = progress * Math.max(video.duration - 0.08, 0);
-      const delta = desiredTime - video.currentTime;
-      if (Math.abs(delta) > 0.025) {
-        video.currentTime += reducedMotion ? delta : delta * 0.32;
-        frame = window.requestAnimationFrame(render);
-      }
-    }
+      const totalFrames = Math.max(1, Math.floor((video.duration - 0.08) * frameRate));
+      targetFrame = Math.round(scrollProgress * totalFrames);
+      const seekInterval = mobile.matches ? 34 : 28;
+      const maxFrameStep = mobile.matches ? 1 : 2;
 
-    const active = Math.min(steps.length - 1, Math.floor(progress * steps.length));
-    steps.forEach((step, index) => {
-      const isActive = index === active;
-      step.classList.toggle('is-active', isActive);
-      step.setAttribute('aria-pressed', String(isActive));
-    });
+      if (reducedMotion) {
+        displayedFrame = targetFrame;
+      } else if (now - lastSeekAt >= seekInterval && displayedFrame !== targetFrame) {
+        const delta = targetFrame - displayedFrame;
+        displayedFrame += Math.sign(delta) * Math.min(Math.abs(delta), maxFrameStep);
+        lastSeekAt = now;
+      }
+
+      const displayedProgress = displayedFrame / totalFrames;
+      const displayedTime = displayedFrame / frameRate;
+      section.style.setProperty('--scroll-progress', displayedProgress);
+      section.dataset.frame = `${displayedFrame}/${totalFrames}`;
+      if (Math.abs(video.currentTime - displayedTime) > 0.015) video.currentTime = displayedTime;
+
+      const active = Math.min(steps.length - 1, Math.floor(displayedProgress * steps.length));
+      steps.forEach((step, index) => {
+        const isActive = index === active;
+        step.classList.toggle('is-active', isActive);
+        step.setAttribute('aria-pressed', String(isActive));
+      });
+
+      if (displayedFrame !== targetFrame) frame = window.requestAnimationFrame(render);
+    }
   };
 
   const requestRender = () => {
     if (!frame) frame = window.requestAnimationFrame(render);
   };
 
-  video.addEventListener('loadedmetadata', render);
-  window.addEventListener('scroll', requestRender, { passive: true });
-  window.addEventListener('resize', requestRender);
-  steps.forEach((step, index) => {
-    step.addEventListener('click', () => {
-      const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
-      const sectionTop = window.scrollY + section.getBoundingClientRect().top;
-      const progress = (index + 0.5) / Math.max(steps.length, 1);
-      window.scrollTo({
-        top: sectionTop + (progress * travel),
-        behavior: reducedMotion ? 'auto' : 'smooth',
-      });
-    });
+  video.pause();
+  video.addEventListener('loadedmetadata', () => {
+    displayedFrame = Math.round(video.currentTime * frameRate);
+    syncSnapPoints();
+    render();
   });
+  window.addEventListener('scroll', requestRender, { passive: true });
+  window.addEventListener('resize', () => {
+    syncSnapPoints();
+    requestRender();
+  });
+  mobile.addEventListener('change', syncSnapPoints);
+  window.addEventListener('wheel', (event) => {
+    if (!mobile.matches || Math.abs(event.deltaY) < 8) return;
+    if (snapping) {
+      event.preventDefault();
+      window.clearTimeout(snapReleaseTimer);
+      snapReleaseTimer = window.setTimeout(() => { snapping = false; }, 250);
+      return;
+    }
+    if (!isRitualActive()) return;
+    if (advanceMobileChapter(Math.sign(event.deltaY))) event.preventDefault();
+  }, { passive: false });
+  window.addEventListener('touchstart', (event) => {
+    if (mobile.matches && isRitualActive()) touchStartY = event.changedTouches[0]?.clientY;
+  }, { passive: true });
+  window.addEventListener('touchend', (event) => {
+    if (touchStartY === undefined) return;
+    const endY = event.changedTouches[0]?.clientY;
+    const delta = touchStartY - endY;
+    touchStartY = undefined;
+    if (Math.abs(delta) > 28) advanceMobileChapter(Math.sign(delta));
+  }, { passive: true });
+  steps.forEach((step, index) => {
+    step.addEventListener('click', () => scrollToStep(index));
+  });
+  syncSnapPoints();
   render();
+}
+
+function initHeroVideo(root) {
+  root.querySelectorAll('.home-hero-video').forEach((video) => {
+    const hero = video.closest('.home-hero');
+    const markReady = () => hero?.classList.add('is-video-ready');
+    video.addEventListener('canplay', markReady, { once: true });
+    video.addEventListener('error', () => hero?.classList.remove('is-video-ready'));
+    if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) markReady();
+    video.play().catch(() => {});
+  });
 }
 
 function initCollection(root) {
@@ -333,6 +460,7 @@ function initMenu(root) {
 }
 
 export function initSiteExperience(root) {
+  initHeroVideo(root);
   initScrollVideo(root);
   initCollection(root);
   initEvents(root);
