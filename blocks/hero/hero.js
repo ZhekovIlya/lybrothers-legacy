@@ -33,6 +33,17 @@ function getPicture(row) {
   return row?.querySelector?.('picture');
 }
 
+function getActionLabel(cell, fallback) {
+  const label = getText(cell);
+  const translations = {
+    'call here': 'Llamar',
+    'call the bar': 'Llamar',
+    'find directions': 'Cómo llegar',
+    'get directions': 'Cómo llegar',
+  };
+  return translations[label.toLowerCase()] || label || fallback;
+}
+
 function appendAction(actions, label, href, modifier) {
   if (!label || !href || /x{3,}|placeholder/i.test(href)) return;
 
@@ -65,9 +76,12 @@ export default function decorate(block) {
   const eyebrow = getText(rows[0]);
   const heading = getText(rows[1]);
   const copy = getText(rows[2]);
-  const callLabel = getText(rows[3]?.children?.[0]);
-  const callHref = getLink(rows[3]?.children?.[1]);
-  const directionsLabel = getText(rows[4]?.children?.[0]);
+  const callLabel = getActionLabel(rows[3]?.children?.[0], 'Llamar');
+  const authoredCallHref = getLink(rows[3]?.children?.[1]);
+  const callHref = /x{3,}|placeholder/i.test(authoredCallHref)
+    ? 'tel:+34602127026'
+    : authoredCallHref;
+  const directionsLabel = getActionLabel(rows[4]?.children?.[0], 'Cómo llegar');
   const directionsHref = getLink(rows[4]?.children?.[1]);
   const picture = rows.map(getPicture).find(Boolean);
 
@@ -96,11 +110,16 @@ export default function decorate(block) {
   if (actions.children.length) content.append(actions);
 
   block.textContent = '';
+  block.id = 'home';
   block.append(content);
 
   if (picture) {
     const image = picture.querySelector('img');
-    if (image && !image.alt) image.alt = heading;
+    if (image) {
+      if (!image.alt) image.alt = heading;
+      image.loading = 'eager';
+      image.fetchPriority = 'high';
+    }
     const media = createElement('div', { className: 'hero-media' });
     media.append(picture);
     block.append(media);

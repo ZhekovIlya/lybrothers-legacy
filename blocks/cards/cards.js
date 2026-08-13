@@ -90,6 +90,7 @@ export default function decorate(block) {
   });
 
   block.textContent = '';
+  block.id = 'menu';
   if (!list.children.length) {
     block.hidden = true;
     return;

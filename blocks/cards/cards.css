@@ -1,4 +1,4 @@
-.cards-container {
+.cards-container:not(.hero-container) {
   background: linear-gradient(rgb(13 9 7 / 94%), rgb(13 9 7 / 94%)),
     radial-gradient(circle at top right, rgb(201 154 74 / 28%), transparent 30rem);
 }

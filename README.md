@@ -11,6 +11,18 @@ Frontend code for the Ly Brothers cocktail bar website on Adobe Experience Manag
 
 A modern AEM Configuration Service site record can define code and content independently and is authoritative when configured. `fstab.yaml` is the legacy, main-branch content-source declaration and remains useful for this repository-style setup. Verify the effective Google Drive source in [AEM Site Admin](https://tools.aem.live/tools/site-admin/index.html); do not assume editing `fstab.yaml` changes a site whose content source is managed there.
 
+## Component map
+
+| Component | Authored in Google Docs | Implemented in GitHub | Missing-content behavior |
+| --- | --- | --- | --- |
+| Header | `nav` document | `blocks/header/` | Shows a complete Spanish fallback navigation until `nav` is previewed. |
+| Hero | `Hero` table in `index` | `blocks/hero/` | Uses `images/speakeasy-hero.webp`; an inserted image replaces it. |
+| Cards/menu | `Cards` table in `index` | `blocks/cards/` | Hides empty or filename-only rows; insert real images or card copy. |
+| Footer | `footer` document | `blocks/footer/` | Shows core contact and location information until `footer` is previewed. |
+| Error page | Not authored | `404.html` | Used only when a requested content path does not exist. |
+
+The fallbacks make a newly connected site usable, but Google Docs remain the source of truth. As soon as valid `nav`, hero image, cards, or `footer` content is previewed, the authored content is used instead.
+
 ## Local development
 
 Prerequisites: a current Node.js LTS release and access to the AEM preview origin.
@@ -40,6 +52,12 @@ npm run lint
 4. Install/confirm the [AEM Code Sync GitHub App](https://github.com/apps/aem-code-sync/installations/new) for the repository.
 5. Create native Google Docs named `index`, `nav`, and `footer` in the Drive root. Preview and publish all three separately.
 
+### Authoring rule: sections and blocks
+
+Use a horizontal rule in Google Docs to start a new visual section. Keep the `Hero` table in its own first section, then add a horizontal rule before introductory copy, `Cards`, or another major block. Without that separator, EDS assigns multiple container classes to the same section and their section-level backgrounds can compete.
+
+Use actual inserted images via **Insert → Image**. Plain text such as `menu-page-1.jpg` or `hero-background.png` is treated as an icon name, not as an image reference.
+
 ### `index` document
 
 Use real inserted images (**Insert → Image**) and set useful image alt text in Google Docs. Typed filenames such as `hero-image.jpg` are interpreted as icon names and are not image placeholders.
@@ -55,6 +73,8 @@ Hero block:
 | Get Directions | https://maps.app.goo.gl/PwqVrGvxxgDSQeHF8 |
 | *(inserted hero image with alt text)* | |
 
+The inserted hero image is rendered as the full-width background with a dark readability overlay. If it is omitted, the repository-provided speakeasy image is used.
+
 Cards block; repeat one row per item:
 
 | Cards | | | |
@@ -69,7 +89,7 @@ Add a Metadata block at the end of the document:
 | --- | --- |
 | Title | Hidden Speakeasy Cocktail Bar in Barcelona — Ly Brothers |
 | Description | Discover Ly Brothers, an intimate cocktail bar in El Raval, Barcelona. |
-| Lang | en |
+| Lang | es |
 | Image | *(inserted 1200 × 630 social image)* |
 
 ### `nav` document
@@ -82,6 +102,8 @@ Use three sections separated by horizontal rules:
 
 The header loads `/nav.plain.html`, supports keyboard focus and Escape, and collapses to a menu button below 900 px.
 
+Until this document exists, the code supplies `Inicio`, `Carta`, `Visítanos`, and `Llamar`. Previewing a valid `nav` document replaces that fallback.
+
 ### `footer` document
 
 Use up to three sections separated by horizontal rules, for example:
@@ -90,7 +112,7 @@ Use up to three sections separated by horizontal rules, for example:
 2. Linked address and opening hours.
 3. Phone link, social links, and legal/copyright text.
 
-The footer loads `/footer.plain.html`. A missing footer document is hidden rather than leaving a broken component.
+The footer loads `/footer.plain.html`. Until that document exists, the code supplies the brand description, Barcelona/El Raval location, directions, phone number, and copyright. Previewing a valid `footer` document replaces that fallback.
 
 ## Preview and publish
 
@@ -100,6 +122,13 @@ Install the [AEM Sidekick](https://www.aem.live/docs/sidekick), add the Google D
 2. Choose **Preview** for each document.
 3. Validate the preview URL.
 4. Choose **Publish** for each document when approved.
+
+Code and content deploy independently:
+
+- A push to GitHub updates JavaScript, CSS, and repository images through AEM Code Sync.
+- **Preview** in Sidekick updates `.aem.page` content for the selected Google Doc.
+- **Publish** in Sidekick updates `.aem.live` content for the selected Google Doc.
+- Publishing code does not publish Google Docs, and publishing `index` does not publish `nav` or `footer`.
 
 Project URLs:
 

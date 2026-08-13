@@ -33,6 +33,28 @@ footer a {
   color: var(--color-gold-light);
 }
 
+footer h2,
+footer h3 {
+  margin-bottom: var(--spacing-s);
+}
+
+footer h2 {
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+footer h3 {
+  color: var(--color-gold-light);
+  font-family: var(--font-body);
+  font-size: 0.8rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+footer .footer-legal {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+}
+
 @media (width >= 700px) {
   footer .footer-content {
     grid-template-columns: repeat(3, minmax(0, 1fr));

@@ -1,22 +1,25 @@
 .hero {
-  display: grid;
-  gap: var(--spacing-xl);
+  display: flex;
+  position: relative;
   align-items: center;
-  min-height: clamp(36rem, 88vh, 56rem);
+  min-height: clamp(36rem, calc(100vh - var(--nav-height)), 52rem);
   color: var(--color-white);
 }
 
-.hero-container {
+main > .hero-container {
   position: relative;
   overflow: hidden;
-  background: radial-gradient(circle at 15% 15%, rgb(201 154 74 / 22%), transparent 28rem),
-    linear-gradient(135deg, var(--color-black), var(--color-brown));
+  padding-block: 0;
+  background:
+    linear-gradient(90deg, rgb(13 9 7 / 94%) 0%, rgb(13 9 7 / 72%) 46%, rgb(13 9 7 / 20%) 100%),
+    url("/images/speakeasy-hero.webp") 60% center / cover no-repeat;
 }
 
 .hero-content {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   max-width: 42rem;
+  padding-block: var(--spacing-xl);
 }
 
 .hero-eyebrow {
@@ -53,34 +56,34 @@
 }
 
 .hero-media {
-  position: relative;
-  isolation: isolate;
-}
-
-.hero-media::before {
   position: absolute;
-  inset: 8%;
-  z-index: -1;
-  border-radius: 999px;
-  background: rgb(201 154 74 / 24%);
-  filter: blur(4rem);
-  content: "";
+  z-index: 0;
+  inset: 0;
 }
 
 .hero picture,
 .hero img {
   width: 100%;
-  border-radius: var(--radius-m);
+  height: 100%;
 }
 
 .hero img {
-  aspect-ratio: 4 / 5;
   object-fit: cover;
-  box-shadow: 0 2rem 5rem rgb(0 0 0 / 42%);
 }
 
-@media (width >= 900px) {
-  .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(18rem, 30rem);
+.hero-media::after {
+  position: absolute;
+  background: linear-gradient(90deg, rgb(13 9 7 / 94%) 0%, rgb(13 9 7 / 72%) 46%, rgb(13 9 7 / 20%) 100%);
+  content: "";
+  inset: 0;
+}
+
+@media (width < 700px) {
+  .hero-container {
+    background-position: 68% center;
+  }
+
+  .hero-media img {
+    object-position: 68% center;
   }
 }

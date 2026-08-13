@@ -2,6 +2,14 @@ import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 const desktop = window.matchMedia('(min-width: 900px)');
+const siteDetails = {
+  phone: 'tel:+34602127026',
+  navigation: [
+    ['Inicio', '/'],
+    ['Carta', '/#menu'],
+    ['Visítanos', '/#visit'],
+  ],
+};
 
 function setMenuState(nav, expanded) {
   const button = nav.querySelector('.nav-toggle');
@@ -18,17 +26,39 @@ function setMenuState(nav, expanded) {
   document.body.classList.toggle('nav-open', mobileExpanded);
 }
 
-function createFallbackBrand() {
-  const wrapper = document.createElement('div');
+function createFallbackNavigation() {
+  const brandWrapper = document.createElement('div');
   const brand = document.createElement('a');
   const heading = document.querySelector('main h1');
 
-  wrapper.className = 'nav-brand';
+  brandWrapper.className = 'nav-brand';
   brand.href = '/';
   brand.textContent = heading?.textContent?.trim() || 'Ly Brothers';
   brand.setAttribute('aria-label', 'Ly Brothers home');
-  wrapper.append(brand);
-  return wrapper;
+  brandWrapper.append(brand);
+
+  const sections = document.createElement('div');
+  sections.className = 'nav-sections';
+  const list = document.createElement('ul');
+  siteDetails.navigation.forEach(([label, href]) => {
+    const item = document.createElement('li');
+    const link = document.createElement('a');
+    link.href = href;
+    link.textContent = label;
+    item.append(link);
+    list.append(item);
+  });
+  sections.append(list);
+
+  const tools = document.createElement('div');
+  tools.className = 'nav-tools';
+  const call = document.createElement('a');
+  call.className = 'button';
+  call.href = siteDetails.phone;
+  call.textContent = 'Llamar';
+  tools.append(call);
+
+  return [brandWrapper, sections, tools];
 }
 
 export default async function decorate(block) {
@@ -42,13 +72,17 @@ export default async function decorate(block) {
   nav.setAttribute('aria-label', 'Primary navigation');
 
   if (fragment) nav.append(...fragment.children);
+  else nav.append(...createFallbackNavigation());
 
   const sectionClasses = ['nav-brand', 'nav-sections', 'nav-tools'];
   [...nav.children].forEach((section, index) => {
     if (sectionClasses[index]) section.classList.add(sectionClasses[index]);
   });
 
-  if (!nav.querySelector('.nav-brand')) nav.append(createFallbackBrand());
+  if (!nav.querySelector('.nav-brand')) {
+    const [fallbackBrand] = createFallbackNavigation();
+    nav.prepend(fallbackBrand);
+  }
 
   const brandLink = nav.querySelector('.nav-brand a');
   brandLink?.classList.remove('button', 'primary', 'secondary', 'accent');
