@@ -12,6 +12,46 @@ function siteHeader(title, eyebrow, copy) {
     </section>`;
 }
 
+function pourStoriesMarkup() {
+  return `
+    <section class="section pour-stories" data-section-status="loaded" data-pour-stories aria-label="Two cocktails, told through the pour">
+      <article class="pour-story is-video-left is-short" data-video-story style="--story-media-size: 100%; --story-reveal: 0;">
+        <div class="pour-story-sticky">
+          <div class="pour-story-copy">
+            <div>
+              <p class="eyebrow">01 · The Bright Pour</p>
+              <h2>Citrus makes the <em>first move.</em></h2>
+              <p>A clean measure of agave meets fresh acidity—bright, precise, and built for the first sip.</p>
+            </div>
+          </div>
+          <div class="pour-story-media">
+            <video class="pour-story-video" muted playsinline preload="auto" poster="/media/cocktail-1.png" aria-label="The Bright Pour: Citrus makes the first move">
+              <source src="/media/pour-story-agave.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="pour-story-progress" aria-hidden="true"><span>01</span><i></i></div>
+        </div>
+      </article>
+      <article class="pour-story is-video-right" data-video-story style="--story-media-size: 100%; --story-reveal: 0;">
+        <div class="pour-story-sticky">
+          <div class="pour-story-copy">
+            <div>
+              <p class="eyebrow">02 · The Slow Stir</p>
+              <h2>Time rounds <em>every edge.</em></h2>
+              <p>Whiskey, cold glass and patient movement. The drink settles into silk before it reaches you.</p>
+            </div>
+          </div>
+          <div class="pour-story-media">
+            <video class="pour-story-video" muted playsinline preload="auto" poster="/media/cocktail-2.png" aria-label="The Slow Stir: Time rounds every edge">
+              <source src="/media/pour-story-whiskey.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="pour-story-progress" aria-hidden="true"><span>02</span><i></i></div>
+        </div>
+      </article>
+    </section>`;
+}
+
 function homeMarkup() {
   return `
     <section class="section home-hero" data-section-status="loaded" aria-labelledby="home-title">
@@ -64,42 +104,7 @@ function homeMarkup() {
       </div>
     </section>
 
-    <section class="section pour-stories" data-section-status="loaded" data-pour-stories aria-label="Two cocktails, told through the pour">
-      <article class="pour-story is-video-left is-short" data-video-story style="--story-media-size: 100%; --story-reveal: 0;">
-        <div class="pour-story-sticky">
-          <div class="pour-story-copy">
-            <div>
-              <p class="eyebrow">01 · The Bright Pour</p>
-              <h2>Citrus makes the <em>first move.</em></h2>
-              <p>A clean measure of agave meets fresh acidity—bright, precise, and built for the first sip.</p>
-            </div>
-          </div>
-          <div class="pour-story-media">
-            <video class="pour-story-video" muted playsinline preload="auto" poster="/media/cocktail-1.png" aria-label="The Bright Pour: Citrus makes the first move">
-              <source src="/media/pour-story-agave.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="pour-story-progress" aria-hidden="true"><span>01</span><i></i></div>
-        </div>
-      </article>
-      <article class="pour-story is-video-right" data-video-story style="--story-media-size: 100%; --story-reveal: 0;">
-        <div class="pour-story-sticky">
-          <div class="pour-story-copy">
-            <div>
-              <p class="eyebrow">02 · The Slow Stir</p>
-              <h2>Time rounds <em>every edge.</em></h2>
-              <p>Whiskey, cold glass and patient movement. The drink settles into silk before it reaches you.</p>
-            </div>
-          </div>
-          <div class="pour-story-media">
-            <video class="pour-story-video" muted playsinline preload="auto" poster="/media/cocktail-2.png" aria-label="The Slow Stir: Time rounds every edge">
-              <source src="/media/pour-story-whiskey.mp4" type="video/mp4">
-            </video>
-          </div>
-          <div class="pour-story-progress" aria-hidden="true"><span>02</span><i></i></div>
-        </div>
-      </article>
-    </section>
+    ${pourStoriesMarkup()}
 
     <section class="section philosophy" data-section-status="loaded" aria-labelledby="philosophy-title">
       <div class="site-shell split-layout">
@@ -229,6 +234,14 @@ export function renderFallbackPage(main) {
   }
 
   return true;
+}
+
+function ensurePourStories(root) {
+  if (root.querySelector('[data-pour-stories]')) return;
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  if (path !== '/') return;
+  const ritual = root.querySelector('[data-scroll-video]')?.closest('.section');
+  ritual?.insertAdjacentHTML('afterend', pourStoriesMarkup());
 }
 
 function clamp(value, minimum = 0, maximum = 1) {
@@ -477,6 +490,7 @@ function initMenu(root) {
 export function initSiteExperience(root) {
   initHeroVideo(root);
   initScrollVideo(root);
+  ensurePourStories(root);
   initPourStories(root);
   initCollection(root);
   initEvents(root);
