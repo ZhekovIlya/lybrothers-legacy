@@ -9,6 +9,7 @@ import {
   loadSections,
   waitForFirstImage,
 } from './aem.js';
+import { initSiteExperience, renderFallbackPage } from './site-content.js';
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerPolicy = window.trustedTypes.createPolicy('ly-brothers-inner', {
@@ -80,7 +81,8 @@ async function loadEager(doc) {
     return;
   }
 
-  decorateMain(main);
+  const fallback = renderFallbackPage(main);
+  if (!fallback) decorateMain(main);
   document.body.classList.add('appear');
 
   const firstSection = main.querySelector('.section');
@@ -97,6 +99,8 @@ async function loadLazy(doc) {
     main ? loadSections(main) : Promise.resolve(),
     footer ? loadFooter(footer) : Promise.resolve(),
   ]);
+
+  if (main) initSiteExperience(main);
 
   decorateLinks(doc);
 

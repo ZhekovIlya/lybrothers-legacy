@@ -1,62 +1,85 @@
 footer {
   border-top: 1px solid var(--border-color);
-  background: var(--color-ink);
-}
-
-footer[hidden] {
-  display: none;
+  background: #080807;
 }
 
 footer .footer-content {
   display: grid;
-  gap: var(--spacing-l);
-  width: min(100%, var(--max-width));
+  gap: 2.5rem;
+  width: min(100% - 2.5rem, var(--max-width));
   margin-inline: auto;
-  padding: var(--spacing-xl) var(--spacing-m);
+  padding-block: 4rem 2rem;
 }
 
 footer .section {
   display: block !important;
 }
 
-footer p,
-footer ul {
-  margin-block: 0 var(--spacing-s);
-}
-
-footer ul {
-  padding: 0;
-  list-style: none;
-}
-
-footer a {
-  color: var(--color-gold-light);
-}
-
-footer h2,
-footer h3 {
-  margin-bottom: var(--spacing-s);
-}
-
-footer h2 {
-  font-size: clamp(2rem, 4vw, 3rem);
+footer .footer-logo img {
+  width: 5rem;
+  height: 5rem;
+  object-fit: contain;
 }
 
 footer h3 {
+  margin-bottom: 1.25rem;
   color: var(--color-gold-light);
   font-family: var(--font-body);
-  font-size: 0.8rem;
+  font-size: 0.74rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
 }
 
-footer .footer-legal {
+footer p,
+footer ul,
+footer address {
+  margin-block: 0 1rem;
   color: var(--color-muted);
-  font-size: 0.85rem;
+  font-size: 0.92rem;
+  font-style: normal;
 }
 
-@media (width >= 700px) {
+footer ul {
+  display: grid;
+  gap: 0.65rem;
+  padding: 0;
+  list-style: none;
+}
+
+footer li span {
+  display: inline-block;
+  min-width: 5.5rem;
+  color: var(--color-cream);
+}
+
+footer a {
+  color: var(--color-cream);
+  text-decoration: none;
+}
+
+footer a:hover,
+footer a:focus-visible {
+  color: var(--color-gold-light);
+}
+
+footer h2 {
+  margin-bottom: var(--spacing-s);
+  font-size: clamp(2rem, 4vw, 3rem);
+}
+
+footer .footer-legal {
+  grid-column: 1 / -1;
+  margin: 1rem 0 0;
+  padding-top: 1.5rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+}
+
+@media (width >= 800px) {
   footer .footer-content {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: 1.5fr repeat(3, 1fr);
+    padding-top: 5rem;
   }
 }

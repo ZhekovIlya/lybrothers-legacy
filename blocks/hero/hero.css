@@ -1,89 +1,21 @@
-.hero {
-  display: flex;
+.home-hero > .hero-wrapper,
+.home-hero .hero.block {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+}
+
+.home-hero .hero.block {
   position: relative;
-  align-items: center;
-  min-height: clamp(36rem, calc(100vh - var(--nav-height)), 52rem);
-  color: var(--color-white);
+  display: grid;
 }
 
-main > .hero-container {
-  position: relative;
-  overflow: hidden;
-  padding-block: 0;
-  background:
-    linear-gradient(90deg, rgb(13 9 7 / 94%) 0%, rgb(13 9 7 / 72%) 46%, rgb(13 9 7 / 20%) 100%),
-    url("/images/speakeasy-hero.webp") 60% center / cover no-repeat;
-}
-
-.hero-content {
-  position: relative;
-  z-index: 2;
-  max-width: 42rem;
-  padding-block: var(--spacing-xl);
-}
-
-.hero-eyebrow {
-  margin-bottom: var(--spacing-s);
-  color: var(--color-gold-light);
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-}
-
-.hero-copy {
-  max-width: 36rem;
-  color: var(--color-muted);
-  font-size: clamp(1.125rem, 2vw, 1.375rem);
-}
-
-.hero-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--spacing-s);
-  margin-top: var(--spacing-s);
-}
-
-.hero-action-directions {
-  background: transparent;
-  color: var(--color-gold-light);
-}
-
-.hero-action-directions:hover,
-.hero-action-directions:focus-visible {
-  background: var(--color-gold-light);
-  color: var(--color-black);
-}
-
-.hero-media {
-  position: absolute;
-  z-index: 0;
-  inset: 0;
-}
-
-.hero picture,
-.hero img {
+.home-hero-backdrop picture,
+.home-hero-backdrop img {
   width: 100%;
   height: 100%;
 }
 
-.hero img {
+.home-hero-backdrop img {
   object-fit: cover;
-}
-
-.hero-media::after {
-  position: absolute;
-  background: linear-gradient(90deg, rgb(13 9 7 / 94%) 0%, rgb(13 9 7 / 72%) 46%, rgb(13 9 7 / 20%) 100%);
-  content: "";
-  inset: 0;
-}
-
-@media (width < 700px) {
-  .hero-container {
-    background-position: 68% center;
-  }
-
-  .hero-media img {
-    object-position: 68% center;
-  }
 }

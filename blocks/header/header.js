@@ -2,14 +2,6 @@ import { getMetadata } from '../../scripts/aem.js';
 import { loadFragment } from '../fragment/fragment.js';
 
 const desktop = window.matchMedia('(min-width: 900px)');
-const siteDetails = {
-  phone: 'tel:+34602127026',
-  navigation: [
-    ['Inicio', '/'],
-    ['Carta', '/#menu'],
-    ['Visítanos', '/#visit'],
-  ],
-};
 
 function setMenuState(nav, expanded) {
   const button = nav.querySelector('.nav-toggle');
@@ -26,43 +18,69 @@ function setMenuState(nav, expanded) {
   document.body.classList.toggle('nav-open', mobileExpanded);
 }
 
-function createFallbackNavigation() {
-  const brandWrapper = document.createElement('div');
+function createFallbackBrand() {
+  const wrapper = document.createElement('div');
   const brand = document.createElement('a');
-  const heading = document.querySelector('main h1');
+  const logo = document.createElement('img');
 
-  brandWrapper.className = 'nav-brand';
+  wrapper.className = 'nav-brand';
   brand.href = '/';
-  brand.textContent = heading?.textContent?.trim() || 'Ly Brothers';
   brand.setAttribute('aria-label', 'Ly Brothers home');
-  brandWrapper.append(brand);
+  logo.src = '/media/logo.png';
+  logo.alt = 'LY Brothers Cocktail Bar';
+  logo.width = 504;
+  logo.height = 495;
+  brand.append(logo);
+  wrapper.append(brand);
+  return wrapper;
+}
 
-  const sections = document.createElement('div');
-  sections.className = 'nav-sections';
+function createFallbackSections() {
+  const wrapper = document.createElement('div');
   const list = document.createElement('ul');
-  const navigation = [...siteDetails.navigation];
-  if (document.querySelector('.spicy-margarita')) {
-    navigation.splice(2, 0, ['Signature', '/#signature']);
-  }
-  navigation.forEach(([label, href]) => {
+  const links = [
+    ['Home', '/'],
+    ['Menu', '/menu/'],
+    ['Contact', '/contact/'],
+  ];
+
+  links.forEach(([label, href]) => {
     const item = document.createElement('li');
     const link = document.createElement('a');
+    const currentPath = window.location.pathname.replace(/\/+$/, '') || '/';
+    const linkPath = href.replace(/\/+$/, '') || '/';
     link.href = href;
     link.textContent = label;
+    if (currentPath === linkPath) link.setAttribute('aria-current', 'page');
     item.append(link);
     list.append(item);
   });
-  sections.append(list);
 
-  const tools = document.createElement('div');
-  tools.className = 'nav-tools';
-  const call = document.createElement('a');
-  call.className = 'button';
-  call.href = siteDetails.phone;
-  call.textContent = 'Llamar';
-  tools.append(call);
+  wrapper.className = 'nav-sections';
+  wrapper.append(list);
+  return wrapper;
+}
 
-  return [brandWrapper, sections, tools];
+function createFallbackTools() {
+  const wrapper = document.createElement('div');
+  const link = document.createElement('a');
+  wrapper.className = 'nav-tools';
+  link.className = 'button button-outline';
+  link.href = 'tel:+34602127026';
+  link.textContent = 'Call Us';
+  wrapper.append(link);
+  return wrapper;
+}
+
+function createTopbar() {
+  const topbar = document.createElement('div');
+  topbar.className = 'site-topbar';
+  topbar.innerHTML = `
+    <div>
+      <a href="https://maps.app.goo.gl/PwqVrGvxxgDSQeHF8" target="_blank" rel="noopener noreferrer">Carrer de Lancaster, 20 · Barcelona</a>
+      <a href="tel:+34602127026">+34 602 12 70 26</a>
+    </div>`;
+  return topbar;
 }
 
 export default async function decorate(block) {
@@ -76,21 +94,27 @@ export default async function decorate(block) {
   nav.setAttribute('aria-label', 'Primary navigation');
 
   if (fragment) nav.append(...fragment.children);
-  else nav.append(...createFallbackNavigation());
+  else nav.append(createFallbackBrand(), createFallbackSections(), createFallbackTools());
 
   const sectionClasses = ['nav-brand', 'nav-sections', 'nav-tools'];
   [...nav.children].forEach((section, index) => {
     if (sectionClasses[index]) section.classList.add(sectionClasses[index]);
   });
 
-  if (!nav.querySelector('.nav-brand')) {
-    const [fallbackBrand] = createFallbackNavigation();
-    nav.prepend(fallbackBrand);
-  }
+  if (!nav.querySelector('.nav-brand')) nav.append(createFallbackBrand());
 
   const brandLink = nav.querySelector('.nav-brand a');
   brandLink?.classList.remove('button', 'primary', 'secondary', 'accent');
   brandLink?.closest('.button-wrapper')?.classList.remove('button-wrapper');
+  if (brandLink && !brandLink.querySelector('img')) {
+    const logo = document.createElement('img');
+    logo.src = '/media/logo.png';
+    logo.alt = 'LY Brothers Cocktail Bar';
+    logo.width = 504;
+    logo.height = 495;
+    brandLink.textContent = '';
+    brandLink.append(logo);
+  }
 
   const menu = nav.querySelector('.nav-sections');
   if (menu) menu.id = 'nav-menu';
@@ -129,6 +153,6 @@ export default async function decorate(block) {
 
   const wrapper = document.createElement('div');
   wrapper.className = 'nav-wrapper';
-  wrapper.append(nav);
+  wrapper.append(createTopbar(), nav);
   block.append(wrapper);
 }

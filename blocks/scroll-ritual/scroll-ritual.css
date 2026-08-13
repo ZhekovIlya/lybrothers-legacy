@@ -1,0 +1,10 @@
+.scroll-ritual > .scroll-ritual-wrapper,
+.scroll-ritual .scroll-ritual.block {
+  width: 100%;
+  max-width: none;
+  height: 100%;
+}
+
+.scroll-ritual .scroll-ritual-wrapper {
+  margin: 0;
+}

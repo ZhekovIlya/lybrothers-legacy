@@ -1,0 +1,11 @@
+.page-intro .page-intro-wrapper {
+  max-width: var(--max-width);
+}
+
+.page-intro.block {
+  text-align: center;
+}
+
+.page-intro.block .lede {
+  margin-inline: auto;
+}

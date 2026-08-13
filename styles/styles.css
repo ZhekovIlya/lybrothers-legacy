@@ -49,6 +49,7 @@ html {
 
 body {
   display: none;
+  overflow-x: hidden;
   margin: 0;
   background: var(--background-color);
   color: var(--text-color);
@@ -231,5 +232,778 @@ a.button:focus-visible {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+}
+
+/* LY Brothers production fallback pages */
+/* stylelint-disable no-descending-specificity */
+
+main > .section.site-section,
+main > .section.home-hero,
+main > .section.scroll-ritual,
+main > .section.page-intro,
+main > .section.contact-page {
+  max-width: none;
+}
+
+.site-shell {
+  width: min(100% - 2.5rem, var(--max-width));
+  margin-inline: auto;
+}
+
+.eyebrow {
+  margin-bottom: 1rem;
+  color: var(--color-gold-light);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+h1 em,
+h2 em {
+  color: var(--color-gold-light);
+  font-weight: 400;
+}
+
+.lede {
+  max-width: 44rem;
+  color: var(--color-muted);
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+}
+
+.text-link {
+  display: inline-flex;
+  gap: 0.6rem;
+  align-items: center;
+  color: var(--color-cream);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.13em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.text-link span {
+  color: var(--color-gold-light);
+  font-size: 1.15rem;
+  transition: transform var(--transition-fast);
+}
+
+.text-link:hover span,
+.text-link:focus-visible span {
+  transform: translateX(0.25rem);
+}
+
+.button.button-outline,
+a.button.button-outline {
+  border-color: rgb(228 195 122 / 65%);
+  background: transparent;
+  color: var(--color-gold-light);
+}
+
+.button.button-outline:hover,
+.button.button-outline:focus-visible,
+a.button.button-outline:hover,
+a.button.button-outline:focus-visible {
+  background: var(--color-gold-light);
+  color: var(--color-black);
+}
+
+.home-hero {
+  position: relative;
+  display: grid;
+  overflow: hidden;
+  min-height: 100svh;
+  margin: 0;
+  padding: 0 0 4rem;
+  isolation: isolate;
+}
+
+.home-hero-backdrop {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background-image: url("/media/hero-image.jpeg");
+  background-position: center;
+  background-size: cover;
+  transform: scale(1.025);
+}
+
+.home-hero::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(5 5 5 / 92%) 0%, rgb(5 5 5 / 65%) 48%, rgb(5 5 5 / 20%) 100%),
+    linear-gradient(0deg, #080807 0%, transparent 38%);
+  content: "";
+}
+
+.home-hero-content {
+  align-self: center;
+  padding-top: 8rem;
+}
+
+.home-hero h1 {
+  max-width: 11ch;
+  margin-bottom: 1.5rem;
+  font-size: clamp(3.4rem, 8vw, 7.2rem);
+}
+
+.home-hero-copy {
+  max-width: 38rem;
+  color: #ded2c3;
+  font-size: clamp(1.05rem, 1.6vw, 1.25rem);
+}
+
+.hero-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  margin-top: 2rem;
+}
+
+.scroll-cue {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  display: grid;
+  gap: 0.65rem;
+  justify-items: center;
+  color: var(--color-muted);
+  font-size: 0.65rem;
+  letter-spacing: 0.18em;
+  text-decoration: none;
+  text-transform: uppercase;
+  transform: translateX(-50%);
+}
+
+.scroll-cue i {
+  width: 1px;
+  height: 2.5rem;
+  background: linear-gradient(var(--color-gold-light) 50%, transparent 50%);
+  background-size: 100% 200%;
+  animation: scroll-cue 1.8s ease-in-out infinite;
+}
+
+@keyframes scroll-cue {
+  0% { background-position: 0 100%; }
+  100% { background-position: 0 -100%; }
+}
+
+.scroll-ritual {
+  --scroll-progress: 0;
+
+  position: relative;
+  height: 420vh;
+  margin: 0;
+  padding: 0;
+  background: #050505;
+}
+
+.ritual-sticky {
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  height: 100svh;
+  background: #050505;
+}
+
+.ritual-video,
+.ritual-shade {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.ritual-video {
+  object-fit: cover;
+}
+
+.ritual-shade {
+  background: linear-gradient(90deg, rgb(3 3 3 / 90%), rgb(3 3 3 / 24%) 55%, rgb(3 3 3 / 72%)),
+    linear-gradient(0deg, rgb(3 3 3 / 82%), transparent 48%);
+}
+
+.ritual-layout {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  align-content: space-between;
+  height: 100%;
+  padding-block: 8rem 5rem;
+}
+
+.ritual-heading h2 {
+  max-width: 9ch;
+  margin-bottom: 1rem;
+  font-size: clamp(3rem, 7vw, 6.5rem);
+}
+
+.ritual-heading > p:last-child {
+  max-width: 25rem;
+  color: #d7ccbd;
+}
+
+.ritual-steps {
+  display: grid;
+  gap: 0.5rem;
+  max-width: 28rem;
+  margin-left: auto;
+}
+
+.ritual-step {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 1rem;
+  align-items: start;
+  padding: 0.8rem 0;
+  border-top: 1px solid rgb(255 255 255 / 20%);
+  opacity: 0.36;
+  transform: translateX(0.5rem);
+  transition: opacity 300ms ease, transform 300ms ease;
+}
+
+.ritual-step.is-active {
+  opacity: 1;
+  transform: none;
+}
+
+.ritual-step > span {
+  padding-top: 0.35rem;
+  color: var(--color-gold-light);
+  font-size: 0.68rem;
+  letter-spacing: 0.12em;
+}
+
+.ritual-step h3,
+.ritual-step p {
+  margin: 0;
+}
+
+.ritual-step h3 {
+  font-size: clamp(1.2rem, 2vw, 1.65rem);
+}
+
+.ritual-step p {
+  color: #d1c5b6;
+  font-size: 0.83rem;
+}
+
+.ritual-progress {
+  position: absolute;
+  z-index: 2;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  left: 1.25rem;
+  height: 1px;
+  background: rgb(255 255 255 / 22%);
+}
+
+.ritual-progress i {
+  display: block;
+  width: calc(var(--scroll-progress) * 100%);
+  height: 100%;
+  background: var(--color-gold-light);
+}
+
+.media-credit {
+  position: absolute;
+  z-index: 2;
+  right: 1.25rem;
+  bottom: 1.7rem;
+  color: rgb(255 255 255 / 52%);
+  font-size: 0.58rem;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.philosophy,
+.hidden-door {
+  background: radial-gradient(circle at 15% 20%, rgb(201 154 74 / 10%), transparent 24rem), #0d0c0a;
+}
+
+.split-layout {
+  display: grid;
+  gap: clamp(3rem, 8vw, 7rem);
+  align-items: center;
+}
+
+.image-frame {
+  position: relative;
+  margin: 0;
+}
+
+.image-frame::before {
+  position: absolute;
+  z-index: 0;
+  inset: -0.75rem 0.75rem 0.75rem -0.75rem;
+  border: 1px solid rgb(201 154 74 / 38%);
+  content: "";
+}
+
+.image-frame img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  object-fit: cover;
+  filter: saturate(0.82) contrast(1.05);
+}
+
+.image-frame figcaption {
+  position: relative;
+  z-index: 2;
+  margin: -0.75rem 1rem 0 auto;
+  color: var(--color-gold-light);
+  font-family: var(--font-heading);
+  font-size: 0.9rem;
+  font-style: italic;
+  text-align: right;
+}
+
+.editorial-image img {
+  aspect-ratio: 4 / 5;
+}
+
+.editorial-copy h2 {
+  max-width: 10ch;
+}
+
+.editorial-copy > p:not(.eyebrow) {
+  color: var(--color-muted);
+}
+
+.editorial-copy .text-link {
+  margin-top: 1rem;
+}
+
+.collection {
+  background: #080807;
+}
+
+.section-heading {
+  margin-bottom: 3rem;
+  text-align: center;
+}
+
+.section-heading h2 {
+  margin: 0;
+}
+
+.cocktail-gallery {
+  display: grid;
+  gap: 1.25rem;
+}
+
+.cocktail-gallery figure {
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  background: var(--color-charcoal);
+}
+
+.cocktail-gallery img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+  transition: transform 700ms cubic-bezier(0.2, 0.65, 0.2, 1);
+}
+
+.cocktail-gallery figure:hover img {
+  transform: scale(1.035);
+}
+
+.cocktail-gallery figcaption {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  display: flex;
+  gap: 1rem;
+  padding: 3rem 1.25rem 1.25rem;
+  background: linear-gradient(transparent, rgb(0 0 0 / 90%));
+  color: var(--color-cream);
+  font-family: var(--font-heading);
+  font-size: 1.3rem;
+}
+
+.cocktail-gallery figcaption span {
+  color: var(--color-gold-light);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+}
+
+.collection-footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.collection-footer p {
+  max-width: 42rem;
+  margin: 0;
+  color: var(--color-muted);
+}
+
+.private-events {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(120deg, #20130e, #0c0a09 60%);
+}
+
+.private-events::before {
+  position: absolute;
+  top: -12rem;
+  right: -10rem;
+  width: 32rem;
+  height: 32rem;
+  border: 1px solid rgb(201 154 74 / 18%);
+  border-radius: 50%;
+  box-shadow: 0 0 0 5rem rgb(201 154 74 / 3%), 0 0 0 10rem rgb(201 154 74 / 2%);
+  content: "";
+}
+
+.events-grid {
+  position: relative;
+  display: grid;
+  gap: clamp(3rem, 8vw, 7rem);
+}
+
+.events-grid h2 {
+  max-width: 11ch;
+}
+
+.events-grid > div > p:not(.eyebrow) {
+  max-width: 38rem;
+  color: var(--color-muted);
+}
+
+.event-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.event-list li {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  padding: 1.5rem 0;
+  border-top: 1px solid var(--border-color);
+}
+
+.event-list li > span {
+  color: var(--color-gold-light);
+  font-size: 0.68rem;
+}
+
+.event-list strong,
+.event-list small {
+  grid-column: 2;
+}
+
+.event-list strong {
+  color: var(--color-cream);
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+}
+
+.event-list small {
+  color: var(--color-muted);
+}
+
+.door-image img {
+  aspect-ratio: 4 / 5;
+}
+
+.visit-details,
+.contact-list {
+  display: grid;
+  gap: 1.25rem;
+  margin: 2rem 0;
+}
+
+.visit-details div,
+.contact-list div {
+  display: grid;
+  grid-template-columns: 7rem 1fr;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+}
+
+.visit-details dt,
+.contact-list dt {
+  color: var(--color-gold-light);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.visit-details dd,
+.contact-list dd {
+  margin: 0;
+  color: var(--color-cream);
+  font-size: 0.95rem;
+}
+
+.door-actions,
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.25rem;
+  align-items: center;
+}
+
+.page-intro {
+  position: relative;
+  overflow: hidden;
+  padding: 12rem 1.25rem 5rem;
+  background: radial-gradient(circle at 50% 0%, rgb(201 154 74 / 20%), transparent 34rem), #0b0a09;
+  text-align: center;
+}
+
+.page-intro::after {
+  position: absolute;
+  right: 15%;
+  bottom: 0;
+  left: 15%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--color-gold), transparent);
+  content: "";
+}
+
+.page-intro h1 {
+  max-width: none;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+}
+
+.page-intro .lede {
+  margin-inline: auto;
+}
+
+.menu-viewer {
+  min-height: 70vh;
+  background: #080807;
+}
+
+.menu-tabs {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  margin-bottom: 2.5rem;
+}
+
+.menu-tabs button {
+  min-width: 9rem;
+  border-color: var(--border-color);
+  background: transparent;
+  color: var(--color-muted);
+}
+
+.menu-tabs button[aria-selected="true"] {
+  border-color: var(--color-gold-light);
+  background: var(--color-gold-light);
+  color: var(--color-black);
+}
+
+.menu-panels figure {
+  width: min(100%, 58rem);
+  margin: 0 auto;
+  text-align: center;
+}
+
+.menu-image-button {
+  overflow: hidden;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 0;
+  background: #16120f;
+  box-shadow: 0 2rem 5rem rgb(0 0 0 / 38%);
+}
+
+.menu-image-button img {
+  width: 100%;
+}
+
+.menu-panels figcaption {
+  margin-top: 1rem;
+  color: var(--color-muted);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.menu-dialog {
+  width: min(96vw, 80rem);
+  max-width: none;
+  max-height: 96vh;
+  padding: 3rem 1rem 1rem;
+  border: 1px solid var(--border-color);
+  background: #0a0908;
+}
+
+.menu-dialog::backdrop {
+  background: rgb(0 0 0 / 88%);
+  backdrop-filter: blur(0.4rem);
+}
+
+.menu-dialog img {
+  max-height: calc(96vh - 4rem);
+  margin: auto;
+}
+
+.dialog-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  width: 2.3rem;
+  min-height: 2.3rem;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-cream);
+  font-size: 1.8rem;
+}
+
+.contact-page {
+  min-height: 100svh;
+  padding: 11rem 1.25rem 6rem;
+  background: radial-gradient(circle at 10% 10%, rgb(201 154 74 / 12%), transparent 28rem), #0b0a09;
+}
+
+.contact-grid {
+  display: grid;
+  gap: clamp(3rem, 8vw, 7rem);
+  align-items: center;
+}
+
+.contact-copy h1 {
+  max-width: 9ch;
+  font-size: clamp(3.5rem, 7vw, 6.5rem);
+}
+
+.contact-image img {
+  aspect-ratio: 4 / 5;
+}
+
+.contact-image figcaption {
+  margin-top: -1.25rem;
+  padding-right: 1.5rem;
+  font-size: 1.3rem;
+}
+
+.contact-image figcaption span {
+  display: block;
+  color: var(--color-muted);
+  font-family: var(--font-body);
+  font-size: 0.65rem;
+  font-style: normal;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+@media (width >= 760px) {
+  .split-layout,
+  .contact-grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  }
+
+  .cocktail-gallery {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    align-items: start;
+  }
+
+  .cocktail-gallery figure:nth-child(2) {
+    margin-top: 4rem;
+  }
+
+  .cocktail-gallery figure:nth-child(3) {
+    margin-top: 1.5rem;
+  }
+
+  .events-grid {
+    grid-template-columns: 1.15fr 0.85fr;
+    align-items: center;
+  }
+
+  .door-layout {
+    grid-template-columns: 1.1fr 0.9fr;
+  }
+
+  .contact-grid {
+    grid-template-columns: 1.15fr 0.85fr;
+  }
+}
+
+@media (width >= 900px) {
+  .home-hero-content {
+    padding-top: 10rem;
+  }
+
+  .ritual-layout {
+    grid-template-columns: 1fr 0.8fr;
+    align-items: end;
+    padding-block: 10rem 6rem;
+  }
+
+  .ritual-heading {
+    align-self: center;
+  }
+
+  .media-credit {
+    right: 2rem;
+    bottom: 2rem;
+  }
+}
+
+@media (width < 600px) {
+  .home-hero::before {
+    background: linear-gradient(0deg, #080807 0%, rgb(5 5 5 / 25%) 55%, rgb(5 5 5 / 78%) 100%);
+  }
+
+  .ritual-layout {
+    padding-top: 6.5rem;
+  }
+
+  .ritual-heading > p:last-child {
+    display: none;
+  }
+
+  .ritual-steps {
+    width: 100%;
+  }
+
+  .ritual-step:not(.is-active) {
+    display: none;
+  }
+
+  .visit-details div,
+  .contact-list div {
+    grid-template-columns: 1fr;
+    gap: 0.4rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-cue i {
+    animation: none;
+  }
+
+  .scroll-ritual {
+    height: 100svh;
+  }
+
+  .ritual-sticky {
+    position: relative;
   }
 }
