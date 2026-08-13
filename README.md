@@ -18,6 +18,7 @@ A modern AEM Configuration Service site record can define code and content indep
 | Header | `nav` document | `blocks/header/` | Shows a complete Spanish fallback navigation until `nav` is previewed. |
 | Hero | `Hero` table in `index` | `blocks/hero/` | Uses `images/speakeasy-hero.webp`; an inserted image replaces it. |
 | Cards/menu | `Cards` table in `index` | `blocks/cards/` | Hides empty or filename-only rows; insert real images or card copy. |
+| Spicy Margarita | `Spicy Margarita` table in `index` | `blocks/spicy-margarita/` | Renders the animated glass without requiring an image; an optional image adds atmosphere behind it. |
 | Footer | `footer` document | `blocks/footer/` | Shows core contact and location information until `footer` is previewed. |
 | Error page | Not authored | `404.html` | Used only when a requested content path does not exist. |
 
@@ -82,6 +83,21 @@ Cards block; repeat one row per item:
 | *(inserted image with alt text)* | Cocktail name | Description | Price |
 
 For image-only menu pages, insert one image per single-cell row and provide alt text identifying the page.
+
+### `Spicy Margarita` block
+
+Place this block in its own section after the Hero or menu introduction. The visual is code-native: the glass, lime, chili, spice rim, floating particles, and liquid movement do not require an image. Motion automatically stops when the visitor prefers reduced motion.
+
+| Spicy Margarita | |
+| --- | --- |
+| Ritual de la casa | |
+| Margarita Fuego | |
+| Lima fresca, tequila y un final ahumado de chile. | |
+| Lima \| Chile \| Borde de especias | |
+| Pruébala esta noche | tel:+34602127026 |
+| *(optional inserted cocktail or bar image with alt text)* | |
+
+Use the pipe character (`|`) inside the tasting-notes row to create individual ingredient pills. If an image is inserted, the block displays it as a subtle circular atmosphere layer behind the animated glass. The fallback navigation adds a `Signature` anchor whenever this block is present.
 
 Add a Metadata block at the end of the document:
 

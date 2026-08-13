@@ -1,0 +1,365 @@
+.spicy-margarita-container {
+  position: relative;
+  overflow: hidden;
+  border-block: 1px solid rgb(201 154 74 / 24%);
+  background:
+    radial-gradient(circle at 78% 48%, rgb(164 22 28 / 26%), transparent 24rem),
+    radial-gradient(circle at 22% 28%, rgb(201 154 74 / 12%), transparent 18rem),
+    var(--color-black);
+}
+
+.spicy-margarita-container::before {
+  position: absolute;
+  background-image:
+    radial-gradient(circle, rgb(228 195 122 / 72%) 0 1px, transparent 1.5px),
+    radial-gradient(circle, rgb(255 250 243 / 42%) 0 1px, transparent 1.5px);
+  background-position: 0 0, 2.5rem 3rem;
+  background-size: 5rem 5rem, 7rem 7rem;
+  content: "";
+  inset: -10%;
+  mask-image: linear-gradient(to bottom, transparent, black 20%, black 80%, transparent);
+  opacity: 0.32;
+  pointer-events: none;
+}
+
+.spicy-margarita {
+  display: grid;
+  position: relative;
+  z-index: 1;
+  gap: var(--spacing-xl);
+  align-items: center;
+  min-height: 38rem;
+}
+
+.spicy-margarita-content {
+  max-width: 38rem;
+  opacity: 0;
+  transform: translateY(2rem);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+.spicy-margarita.is-visible .spicy-margarita-content {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.spicy-margarita-eyebrow {
+  margin-bottom: var(--spacing-s);
+  color: var(--color-gold-light);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.spicy-margarita h2 {
+  max-width: 9ch;
+  background: linear-gradient(115deg, var(--color-white) 12%, var(--color-gold-light) 72%);
+  background-clip: text;
+  color: transparent;
+  font-size: clamp(3.25rem, 8vw, 6.5rem);
+  font-style: italic;
+}
+
+.spicy-margarita-copy {
+  max-width: 34rem;
+  color: var(--color-muted);
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+}
+
+.spicy-margarita-notes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-xs);
+  margin: 0 0 var(--spacing-l);
+  padding: 0;
+  list-style: none;
+}
+
+.spicy-margarita-notes li {
+  padding: 0.35rem 0.8rem;
+  border: 1px solid rgb(228 195 122 / 38%);
+  border-radius: 999px;
+  color: var(--color-gold-light);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.spicy-margarita-action::after {
+  margin-left: 0.7rem;
+  content: "→";
+  transition: transform var(--transition-fast);
+}
+
+.spicy-margarita-action:hover::after,
+.spicy-margarita-action:focus-visible::after {
+  transform: translateX(0.25rem);
+}
+
+.spicy-margarita-visual {
+  display: grid;
+  position: relative;
+  place-items: center;
+  min-height: 32rem;
+  opacity: 0;
+  transform: scale(0.92) rotate(2deg);
+  transition: opacity 900ms 120ms ease, transform 900ms 120ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.spicy-margarita.is-visible .spicy-margarita-visual {
+  opacity: 1;
+  transform: scale(1) rotate(0);
+}
+
+.spicy-margarita-photo {
+  position: absolute;
+  overflow: hidden;
+  width: min(90%, 30rem);
+  border: 1px solid rgb(228 195 122 / 28%);
+  border-radius: 50%;
+  aspect-ratio: 1;
+  box-shadow: 0 0 6rem rgb(164 22 28 / 30%);
+  inset: 50% auto auto 50%;
+  opacity: 0.42;
+  transform: translate(-50%, -50%);
+}
+
+.spicy-margarita-photo picture,
+.spicy-margarita-photo img {
+  width: 100%;
+  height: 100%;
+}
+
+.spicy-margarita-photo img {
+  object-fit: cover;
+  filter: saturate(0.75) contrast(1.12);
+}
+
+.margarita-art {
+  position: relative;
+  width: min(100%, 34rem);
+  color: var(--color-gold-light);
+  filter: drop-shadow(0 2rem 2.5rem rgb(0 0 0 / 62%));
+}
+
+.margarita-aura {
+  position: absolute;
+  border: 1px solid rgb(228 195 122 / 24%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgb(164 22 28 / 26%), transparent 65%);
+  inset: 8%;
+  animation: margarita-aura 5s ease-in-out infinite;
+}
+
+.margarita-glass {
+  display: block;
+  position: relative;
+  width: 100%;
+  overflow: visible;
+  animation: margarita-float 6s ease-in-out infinite;
+}
+
+.margarita-rim,
+.margarita-bowl,
+.margarita-shine,
+.margarita-stem,
+.margarita-base {
+  fill: none;
+  stroke: rgb(255 250 243 / 78%);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.margarita-rim,
+.margarita-bowl {
+  stroke-width: 4;
+}
+
+.margarita-shine {
+  stroke: rgb(255 255 255 / 42%);
+  stroke-width: 7;
+}
+
+.margarita-stem,
+.margarita-base {
+  stroke-width: 6;
+}
+
+.margarita-salt {
+  fill: none;
+  stroke: var(--color-gold-light);
+  stroke-dasharray: 2 11;
+  stroke-linecap: round;
+  stroke-width: 10;
+  animation: margarita-rim 8s linear infinite;
+}
+
+.margarita-liquid {
+  fill: rgb(170 207 87 / 62%);
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: margarita-liquid 4.5s ease-in-out infinite;
+}
+
+.margarita-ice rect {
+  fill: rgb(255 255 255 / 13%);
+  stroke: rgb(255 255 255 / 42%);
+  stroke-width: 2;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: margarita-ice 5s ease-in-out infinite;
+}
+
+.margarita-ice rect:nth-child(2) {
+  animation-delay: -1.6s;
+}
+
+.margarita-ice rect:nth-child(3) {
+  animation-delay: -3.1s;
+}
+
+.margarita-lime {
+  fill: #91b83e;
+  stroke: #d8ef83;
+  stroke-width: 3;
+  transform-box: fill-box;
+  transform-origin: 50% 90%;
+  animation: margarita-lime 5s ease-in-out infinite;
+}
+
+.margarita-lime-line {
+  fill: none;
+  stroke: rgb(26 44 12 / 58%);
+  stroke-width: 3;
+}
+
+.margarita-pepper-body {
+  fill: #b7282e;
+  stroke: #f0654e;
+  stroke-width: 3;
+}
+
+.margarita-pepper-stem {
+  fill: none;
+  stroke: #7f9b3e;
+  stroke-linecap: round;
+  stroke-width: 10;
+}
+
+.margarita-pepper {
+  transform-box: fill-box;
+  transform-origin: top right;
+  animation: margarita-pepper 4s ease-in-out infinite;
+}
+
+.margarita-dust circle {
+  fill: var(--color-gold-light);
+  opacity: 0;
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: margarita-spice 3.5s ease-out infinite;
+}
+
+.margarita-dust circle:nth-child(2) { animation-delay: -0.7s; }
+.margarita-dust circle:nth-child(3) { animation-delay: -1.4s; }
+.margarita-dust circle:nth-child(4) { animation-delay: -2.1s; }
+.margarita-dust circle:nth-child(5) { animation-delay: -2.8s; }
+.margarita-dust circle:nth-child(6) { animation-delay: -3.2s; }
+
+@keyframes margarita-float {
+  0%, 100% { transform: translateY(0) rotate(-1deg); }
+  50% { transform: translateY(-0.9rem) rotate(1deg); }
+}
+
+@keyframes margarita-aura {
+  0%, 100% {
+    opacity: 0.55;
+    transform: scale(0.94);
+  }
+
+  50% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+@keyframes margarita-rim {
+  to { stroke-dashoffset: -52; }
+}
+
+@keyframes margarita-liquid {
+  0%, 100% { transform: rotate(-1deg) translateY(0); }
+  50% { transform: rotate(1.4deg) translateY(0.2rem); }
+}
+
+@keyframes margarita-ice {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  50% { transform: translateY(-0.5rem) rotate(7deg); }
+}
+
+@keyframes margarita-lime {
+  0%, 100% { transform: rotate(-4deg); }
+  50% { transform: rotate(5deg); }
+}
+
+@keyframes margarita-pepper {
+  0%, 100% { transform: rotate(-6deg); }
+  50% { transform: rotate(7deg); }
+}
+
+@keyframes margarita-spice {
+  0% {
+    opacity: 0;
+    transform: translateY(1rem) scale(0.5);
+  }
+
+  35% { opacity: 0.9; }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-2.5rem) scale(1.2);
+  }
+}
+
+@media (width >= 900px) {
+  .spicy-margarita {
+    grid-template-columns: minmax(0, 0.9fr) minmax(24rem, 1.1fr);
+  }
+}
+
+@media (width < 700px) {
+  .spicy-margarita {
+    gap: var(--spacing-m);
+    min-height: auto;
+  }
+
+  .spicy-margarita h2 {
+    font-size: clamp(3rem, 17vw, 4.8rem);
+  }
+
+  .spicy-margarita-visual {
+    min-height: 24rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spicy-margarita-content,
+  .spicy-margarita-visual {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+
+  .margarita-aura,
+  .margarita-glass,
+  .margarita-salt,
+  .margarita-liquid,
+  .margarita-ice rect,
+  .margarita-lime,
+  .margarita-pepper,
+  .margarita-dust circle {
+    animation: none;
+  }
+}

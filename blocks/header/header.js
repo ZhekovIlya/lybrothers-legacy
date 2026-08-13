@@ -40,7 +40,11 @@ function createFallbackNavigation() {
   const sections = document.createElement('div');
   sections.className = 'nav-sections';
   const list = document.createElement('ul');
-  siteDetails.navigation.forEach(([label, href]) => {
+  const navigation = [...siteDetails.navigation];
+  if (document.querySelector('.spicy-margarita')) {
+    navigation.splice(2, 0, ['Signature', '/#signature']);
+  }
+  navigation.forEach(([label, href]) => {
     const item = document.createElement('li');
     const link = document.createElement('a');
     link.href = href;
