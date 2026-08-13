@@ -241,6 +241,7 @@ a.button:focus-visible {
 main > .section.site-section,
 main > .section.home-hero,
 main > .section.scroll-ritual,
+main > .section.pour-stories,
 main > .section.page-intro,
 main > .section.contact-page {
   max-width: none;
@@ -404,18 +405,6 @@ main > .section.home-hero > .home-hero-backdrop {
   margin-top: 2rem;
 }
 
-.hero-media-credit {
-  position: absolute;
-  right: 1.25rem;
-  bottom: 1rem;
-  z-index: 2;
-  color: rgb(255 255 255 / 48%);
-  font-size: 0.55rem;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  text-transform: uppercase;
-}
-
 .scroll-cue {
   position: absolute;
   bottom: 2rem;
@@ -449,20 +438,10 @@ main > .section.home-hero > .home-hero-backdrop {
   --scroll-target: 0;
 
   position: relative;
-  height: 480vh;
+  height: 380vh;
   margin: 0;
   padding: 0;
   background: #050505;
-}
-
-.ritual-snap-point {
-  position: absolute;
-  left: 50%;
-  width: 1px;
-  height: 1px;
-  pointer-events: none;
-  scroll-snap-align: center;
-  scroll-snap-stop: always;
 }
 
 main > .section.scroll-ritual {
@@ -607,16 +586,131 @@ main > .section.scroll-ritual > .ritual-sticky {
   background: var(--color-gold-light);
 }
 
-.media-credit {
+.pour-stories,
+.pour-stories .pour-stories-wrapper,
+.pour-stories .pour-stories.block {
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  background: #050505;
+}
+
+.pour-story {
+  --story-media-size: 100%;
+  --story-reveal: 0;
+  --story-progress: 0;
+  --story-copy-shift: 32px;
+
+  position: relative;
+  height: 300vh;
+  background: #050505;
+}
+
+.pour-story.is-short {
+  height: 220vh;
+}
+
+.pour-story-sticky {
+  position: sticky;
+  top: 0;
+  overflow: hidden;
+  height: 100svh;
+  background: #080807;
+  isolation: isolate;
+}
+
+.pour-story-media,
+.pour-story-copy {
   position: absolute;
+  top: 0;
+  bottom: 0;
+}
+
+.pour-story-media {
   z-index: 2;
-  right: 1.25rem;
-  bottom: 1.7rem;
-  color: rgb(255 255 255 / 52%);
-  font-size: 0.58rem;
-  letter-spacing: 0.08em;
-  text-decoration: none;
-  text-transform: uppercase;
+  overflow: hidden;
+  width: var(--story-media-size);
+  background: #080807;
+  transition: width 80ms linear;
+}
+
+.pour-story.is-video-left .pour-story-media,
+.pour-story.is-video-right .pour-story-copy {
+  left: 0;
+}
+
+.pour-story.is-video-right .pour-story-media,
+.pour-story.is-video-left .pour-story-copy {
+  right: 0;
+}
+
+.pour-story-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: saturate(0.82) contrast(1.06);
+}
+
+.pour-story-media::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgb(3 3 3 / 28%), transparent 38%),
+    linear-gradient(90deg, transparent 70%, rgb(3 3 3 / 28%));
+  content: "";
+  pointer-events: none;
+}
+
+.pour-story.is-video-right .pour-story-media::after {
+  background: linear-gradient(0deg, rgb(3 3 3 / 28%), transparent 38%),
+    linear-gradient(-90deg, transparent 70%, rgb(3 3 3 / 28%));
+}
+
+.pour-story-copy {
+  z-index: 1;
+  display: grid;
+  align-items: center;
+  width: 50%;
+  padding: clamp(2rem, 7vw, 8rem);
+  background: radial-gradient(circle at 50% 45%, rgb(201 154 74 / 11%), transparent 28rem), #0d0c0a;
+  opacity: var(--story-reveal);
+}
+
+.pour-story-copy > div {
+  max-width: 34rem;
+  transform: translateY(var(--story-copy-shift));
+}
+
+.pour-story-copy h2 {
+  max-width: 10ch;
+  margin-bottom: 1.5rem;
+  font-size: clamp(2.8rem, 5.6vw, 6rem);
+}
+
+.pour-story-copy > div > p:last-child {
+  max-width: 30rem;
+  color: #d4c8b9;
+  font-size: clamp(1rem, 1.45vw, 1.2rem);
+}
+
+.pour-story-progress {
+  position: absolute;
+  z-index: 3;
+  right: 1.5rem;
+  bottom: 1.5rem;
+  left: 1.5rem;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.8rem;
+  align-items: center;
+  color: var(--color-gold-light);
+  font-size: 0.62rem;
+  letter-spacing: 0.14em;
+  pointer-events: none;
+}
+
+.pour-story-progress i {
+  height: 1px;
+  background: linear-gradient(90deg, var(--color-gold-light) calc(var(--story-progress) * 100%), rgb(255 255 255 / 24%) 0);
 }
 
 .philosophy,
@@ -1215,32 +1309,11 @@ main > .section.contact-page {
     align-self: center;
   }
 
-  .media-credit {
-    right: 2rem;
-    bottom: 2rem;
-  }
 }
 
 @media (width < 600px) {
-  html.has-ritual-snap {
-    scroll-snap-type: y proximity;
-  }
-
   .scroll-ritual {
-    height: 620vh;
-  }
-
-  .ritual-snap-entry,
-  .ritual-snap-exit {
-    scroll-snap-stop: always;
-  }
-
-  .ritual-snap-entry {
-    scroll-snap-align: end;
-  }
-
-  .ritual-snap-exit {
-    scroll-snap-align: start;
+    height: 340vh;
   }
 
   .home-hero::before {
@@ -1278,16 +1351,64 @@ main > .section.contact-page {
     bottom: 0.75rem;
   }
 
-  .media-credit {
-    top: 0.75rem;
-    right: 1rem;
+  .pour-story {
+    height: 320vh;
+  }
+
+  .pour-story.is-short {
+    height: 230vh;
+  }
+
+  .pour-story-media {
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: var(--story-media-size);
+    transition: height 80ms linear;
+  }
+
+  .pour-story.is-video-left .pour-story-media {
+    top: 0;
     bottom: auto;
   }
 
-  .hero-media-credit {
-    right: 0.75rem;
-    bottom: 0.5rem;
-    font-size: 0.5rem;
+  .pour-story.is-video-right .pour-story-media {
+    top: auto;
+    bottom: 0;
+  }
+
+  .pour-story-copy {
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: 55%;
+    padding: 2rem 1.5rem 3.5rem;
+  }
+
+  .pour-story.is-video-left .pour-story-copy {
+    top: auto;
+    bottom: 0;
+  }
+
+  .pour-story.is-video-right .pour-story-copy {
+    top: 0;
+    bottom: auto;
+    padding-top: 6.5rem;
+  }
+
+  .pour-story-copy h2 {
+    max-width: 12ch;
+    margin-bottom: 0.8rem;
+    font-size: clamp(2.5rem, 13vw, 4rem);
+  }
+
+  .pour-story-copy .eyebrow {
+    margin-bottom: 0.6rem;
+  }
+
+  .pour-story-copy > div > p:last-child {
+    margin-bottom: 0;
+    font-size: 0.94rem;
   }
 
   .visit-details div,

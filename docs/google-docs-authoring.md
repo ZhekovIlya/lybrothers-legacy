@@ -28,9 +28,9 @@ Repository paths such as `/media/hero-image.jpeg` remain supported as a fallback
 Videos live in Google Drive beside the page documents rather than inside a
 Google Doc. From Drive, upload the MP4, select it, and use AEM Sidekick to
 **Preview** and then **Publish** the media file. Copy its resulting site URL or
-path into the `Video` row of the Hero or Scroll Ritual table. This can all be
-done from a phone browser that supports Sidekick; the Google Docs app alone can
-edit the URL but cannot publish the MP4.
+path into the `Video` row of the Hero, Scroll Ritual, or Pour Stories table.
+This can all be done from a phone browser that supports Sidekick; the Google
+Docs app alone can edit the URL but cannot publish the MP4.
 
 Keep hero loops short, silent, landscape, and preferably below 8 MB. Scroll
 videos should be landscape MP4 files with frequent keyframes; clips around
@@ -68,6 +68,17 @@ Sidekick-capable browser available for that final step.
 | Step | 01 | Measure the agave | Precision first. Character follows. |
 | Step | 02 | Shake the night | Ice, citrus and movement become texture. |
 | Step | 03 | Pour the reveal | The final detail is always yours. |
+
+### Pour Stories
+
+Each `Story` row is one scroll film. Keep the first story set to `Left` and the
+second to `Right` to preserve the alternating composition. The film starts full
+screen and resolves into a 50/50 film-and-copy layout near its final frames.
+
+| Pour Stories | | | | | | |
+| --- | --- | --- | --- | --- | --- | --- |
+| Story | Left | /media/pour-story-agave.mp4 | 01 · The Bright Pour | Citrus makes the first move. | A clean measure of agave meets fresh acidity—bright, precise, and built for the first sip. | Insert a poster image, or use `/media/cocktail-1.png` |
+| Story | Right | /media/pour-story-whiskey.mp4 | 02 · The Slow Stir | Time rounds every edge. | Whiskey, cold glass and patient movement. The drink settles into silk before it reaches you. | Insert a poster image, or use `/media/cocktail-2.png` |
 
 ### Philosophy
 

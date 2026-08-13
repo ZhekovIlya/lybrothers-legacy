@@ -30,7 +30,6 @@ function homeMarkup() {
         </p>
       </div>
       <a class="scroll-cue" href="#ritual"><span>Discover</span><i aria-hidden="true"></i></a>
-      <a class="hero-media-credit" href="https://www.pexels.com/video/a-barman-placing-a-glass-with-ice-cubes-on-the-counter-14058813/" target="_blank" rel="noopener noreferrer">Film: binary Ego / Pexels</a>
     </section>
 
     <section id="ritual" class="section scroll-ritual" data-section-status="loaded" data-scroll-video aria-labelledby="ritual-title">
@@ -62,8 +61,44 @@ function homeMarkup() {
           <p class="ritual-hint">Scroll to mix · tap a step</p>
         </div>
         <div class="ritual-progress" aria-hidden="true"><i></i></div>
-        <a class="media-credit" href="https://www.pexels.com/video/person-making-cocktails-7219892/" target="_blank" rel="noopener noreferrer">Film: ArtHouse Studio / Pexels</a>
       </div>
+    </section>
+
+    <section class="section pour-stories" data-section-status="loaded" data-pour-stories aria-label="Two cocktails, told through the pour">
+      <article class="pour-story is-video-left is-short" data-video-story style="--story-media-size: 100%; --story-reveal: 0;">
+        <div class="pour-story-sticky">
+          <div class="pour-story-copy">
+            <div>
+              <p class="eyebrow">01 · The Bright Pour</p>
+              <h2>Citrus makes the <em>first move.</em></h2>
+              <p>A clean measure of agave meets fresh acidity—bright, precise, and built for the first sip.</p>
+            </div>
+          </div>
+          <div class="pour-story-media">
+            <video class="pour-story-video" muted playsinline preload="auto" poster="/media/cocktail-1.png" aria-label="The Bright Pour: Citrus makes the first move">
+              <source src="/media/pour-story-agave.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="pour-story-progress" aria-hidden="true"><span>01</span><i></i></div>
+        </div>
+      </article>
+      <article class="pour-story is-video-right" data-video-story style="--story-media-size: 100%; --story-reveal: 0;">
+        <div class="pour-story-sticky">
+          <div class="pour-story-copy">
+            <div>
+              <p class="eyebrow">02 · The Slow Stir</p>
+              <h2>Time rounds <em>every edge.</em></h2>
+              <p>Whiskey, cold glass and patient movement. The drink settles into silk before it reaches you.</p>
+            </div>
+          </div>
+          <div class="pour-story-media">
+            <video class="pour-story-video" muted playsinline preload="auto" poster="/media/cocktail-2.png" aria-label="The Slow Stir: Time rounds every edge">
+              <source src="/media/pour-story-whiskey.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="pour-story-progress" aria-hidden="true"><span>02</span><i></i></div>
+        </div>
+      </article>
     </section>
 
     <section class="section philosophy" data-section-status="loaded" aria-labelledby="philosophy-title">
@@ -196,6 +231,15 @@ export function renderFallbackPage(main) {
   return true;
 }
 
+function clamp(value, minimum = 0, maximum = 1) {
+  return Math.max(minimum, Math.min(maximum, value));
+}
+
+function getTrackProgress(track) {
+  const travel = Math.max(track.offsetHeight - window.innerHeight, 1);
+  return clamp(-track.getBoundingClientRect().top / travel);
+}
+
 function initScrollVideo(root) {
   const section = root.querySelector('[data-scroll-video]');
   if (!section) return;
@@ -203,163 +247,134 @@ function initScrollVideo(root) {
   const video = section.querySelector('video');
   const steps = [...section.querySelectorAll('[data-step]')];
   const track = section.closest('.section') || section;
-  let frame;
-  let targetFrame = 0;
-  let displayedFrame = 0;
-  let lastSeekAt = 0;
-  let snappedIndex = -1;
-  let snapping = false;
-  let touchStartY;
-  let snapReleaseTimer;
-
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const mobile = window.matchMedia('(width < 600px)');
-  const frameRate = 24;
+  const frameRate = 25;
+  let animationFrame;
+  let displayedTime = 0;
+  let targetTime = 0;
 
-  track.previousElementSibling?.classList.add('ritual-snap-entry');
-  track.nextElementSibling?.classList.add('ritual-snap-exit');
-
-  const snapPoints = steps.map((_, index) => {
-    const point = document.createElement('i');
-    point.className = 'ritual-snap-point';
-    point.setAttribute('aria-hidden', 'true');
-    point.dataset.snapStep = index;
-    section.append(point);
-    return point;
-  });
-
-  const syncSnapPoints = () => {
-    const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
-    snapPoints.forEach((point, index) => {
-      const progress = (index + 0.5) / Math.max(steps.length, 1);
-      point.style.top = `${(progress * travel) + (window.innerHeight / 2)}px`;
-    });
-    document.documentElement.classList.toggle('has-ritual-snap', mobile.matches);
-  };
-
-  const isRitualActive = () => {
-    const bounds = section.getBoundingClientRect();
-    return bounds.top <= window.innerHeight * 0.5 && bounds.bottom >= window.innerHeight * 0.5;
-  };
-
-  const scrollToStep = (index, behavior = 'smooth') => {
-    const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
-    const sectionTop = window.scrollY + section.getBoundingClientRect().top;
-    const progress = (index + 0.5) / Math.max(steps.length, 1);
-    snappedIndex = index;
-    snapping = true;
-    window.clearTimeout(snapReleaseTimer);
-    window.scrollTo({
-      top: sectionTop + (progress * travel),
-      behavior: reducedMotion ? 'auto' : behavior,
-    });
-    snapReleaseTimer = window.setTimeout(() => { snapping = false; }, 850);
-  };
-
-  const advanceMobileChapter = (direction) => {
-    if (!mobile.matches || !isRitualActive()) return false;
-    if (snapping) return true;
-    const leavingStart = direction < 0 && snappedIndex <= 0;
-    const leavingEnd = direction > 0 && snappedIndex >= steps.length - 1;
-    if (leavingStart || leavingEnd) {
-      const sectionTop = window.scrollY + section.getBoundingClientRect().top;
-      snappedIndex = direction > 0 ? steps.length : -1;
-      snapping = true;
-      window.clearTimeout(snapReleaseTimer);
-      window.scrollTo({
-        top: direction > 0
-          ? sectionTop + track.offsetHeight - window.innerHeight + 1
-          : Math.max(0, sectionTop - window.innerHeight),
-        behavior: reducedMotion ? 'auto' : 'smooth',
-      });
-      snapReleaseTimer = window.setTimeout(() => { snapping = false; }, 850);
-      return true;
-    }
-    let nextIndex = Math.max(0, Math.min(steps.length - 1, snappedIndex + direction));
-    if (snappedIndex < 0) nextIndex = direction > 0 ? 0 : steps.length - 1;
-    scrollToStep(nextIndex);
-    return true;
-  };
-
-  const render = (now = performance.now()) => {
-    frame = null;
-    const travel = Math.max(section.offsetHeight - window.innerHeight, 1);
-    const scrollProgress = Math.max(0, Math.min(1, -section.getBoundingClientRect().top / travel));
+  const render = () => {
+    animationFrame = null;
+    const scrollProgress = getTrackProgress(track);
     section.style.setProperty('--scroll-target', scrollProgress);
 
     if (video.duration && Number.isFinite(video.duration)) {
-      const totalFrames = Math.max(1, Math.floor((video.duration - 0.08) * frameRate));
-      targetFrame = Math.round(scrollProgress * totalFrames);
-      const seekInterval = mobile.matches ? 34 : 28;
-      const maxFrameStep = mobile.matches ? 1 : 2;
+      const usableDuration = Math.max(0, video.duration - 0.08);
+      targetTime = scrollProgress * usableDuration;
+      const delta = targetTime - displayedTime;
+      const response = mobile.matches ? 0.48 : 0.4;
+      displayedTime = reducedMotion || Math.abs(delta) < (1 / frameRate)
+        ? targetTime
+        : displayedTime + (delta * response);
 
-      if (reducedMotion) {
-        displayedFrame = targetFrame;
-      } else if (now - lastSeekAt >= seekInterval && displayedFrame !== targetFrame) {
-        const delta = targetFrame - displayedFrame;
-        displayedFrame += Math.sign(delta) * Math.min(Math.abs(delta), maxFrameStep);
-        lastSeekAt = now;
-      }
+      const quantizedTime = Math.round(displayedTime * frameRate) / frameRate;
+      const displayedProgress = usableDuration ? quantizedTime / usableDuration : 0;
+      section.style.setProperty('--scroll-progress', clamp(displayedProgress));
+      section.dataset.frame = `${Math.round(quantizedTime * frameRate)}/${Math.round(usableDuration * frameRate)}`;
+      if (Math.abs(video.currentTime - quantizedTime) > 0.025) video.currentTime = quantizedTime;
 
-      const displayedProgress = displayedFrame / totalFrames;
-      const displayedTime = displayedFrame / frameRate;
-      section.style.setProperty('--scroll-progress', displayedProgress);
-      section.dataset.frame = `${displayedFrame}/${totalFrames}`;
-      if (Math.abs(video.currentTime - displayedTime) > 0.015) video.currentTime = displayedTime;
-
-      const active = Math.min(steps.length - 1, Math.floor(displayedProgress * steps.length));
+      const active = Math.min(
+        steps.length - 1,
+        Math.floor(clamp(displayedProgress) * steps.length),
+      );
       steps.forEach((step, index) => {
         const isActive = index === active;
         step.classList.toggle('is-active', isActive);
         step.setAttribute('aria-pressed', String(isActive));
       });
 
-      if (displayedFrame !== targetFrame) frame = window.requestAnimationFrame(render);
+      if (Math.abs(targetTime - displayedTime) >= (1 / frameRate)) {
+        animationFrame = window.requestAnimationFrame(render);
+      }
     }
   };
 
   const requestRender = () => {
-    if (!frame) frame = window.requestAnimationFrame(render);
+    if (!animationFrame) animationFrame = window.requestAnimationFrame(render);
+  };
+
+  const scrollToStep = (index) => {
+    const travel = Math.max(track.offsetHeight - window.innerHeight, 1);
+    const trackTop = window.scrollY + track.getBoundingClientRect().top;
+    const progress = (index + 0.5) / Math.max(steps.length, 1);
+    window.scrollTo({
+      top: trackTop + (progress * travel),
+      behavior: reducedMotion ? 'auto' : 'smooth',
+    });
   };
 
   video.pause();
   video.addEventListener('loadedmetadata', () => {
-    displayedFrame = Math.round(video.currentTime * frameRate);
-    syncSnapPoints();
-    render();
-  });
-  window.addEventListener('scroll', requestRender, { passive: true });
-  window.addEventListener('resize', () => {
-    syncSnapPoints();
+    displayedTime = video.currentTime;
     requestRender();
   });
-  mobile.addEventListener('change', syncSnapPoints);
-  window.addEventListener('wheel', (event) => {
-    if (!mobile.matches || Math.abs(event.deltaY) < 8) return;
-    if (snapping) {
-      event.preventDefault();
-      window.clearTimeout(snapReleaseTimer);
-      snapReleaseTimer = window.setTimeout(() => { snapping = false; }, 250);
-      return;
-    }
-    if (!isRitualActive()) return;
-    if (advanceMobileChapter(Math.sign(event.deltaY))) event.preventDefault();
-  }, { passive: false });
-  window.addEventListener('touchstart', (event) => {
-    if (mobile.matches && isRitualActive()) touchStartY = event.changedTouches[0]?.clientY;
-  }, { passive: true });
-  window.addEventListener('touchend', (event) => {
-    if (touchStartY === undefined) return;
-    const endY = event.changedTouches[0]?.clientY;
-    const delta = touchStartY - endY;
-    touchStartY = undefined;
-    if (Math.abs(delta) > 28) advanceMobileChapter(Math.sign(delta));
-  }, { passive: true });
-  steps.forEach((step, index) => {
-    step.addEventListener('click', () => scrollToStep(index));
+  window.addEventListener('scroll', requestRender, { passive: true });
+  window.addEventListener('resize', requestRender);
+  steps.forEach((step, index) => step.addEventListener('click', () => scrollToStep(index)));
+  requestRender();
+}
+
+function initPourStories(root) {
+  const stories = [...root.querySelectorAll('[data-video-story]')];
+  if (!stories.length) return;
+
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const mobile = window.matchMedia('(width < 600px)');
+  const frameRate = 25;
+  let animationFrame;
+  const states = stories.map((story) => {
+    const video = story.querySelector('video');
+    video?.pause();
+    return {
+      story, video, displayedTime: 0, targetTime: 0,
+    };
   });
-  syncSnapPoints();
-  render();
+
+  const render = () => {
+    animationFrame = null;
+    let needsAnotherFrame = false;
+
+    states.forEach((state) => {
+      const progress = getTrackProgress(state.story);
+      const reveal = clamp((progress - 0.78) / 0.2);
+      const split = mobile.matches ? 55 : 50;
+      state.story.style.setProperty('--story-media-size', `${100 - (reveal * split)}%`);
+      state.story.style.setProperty('--story-reveal', reveal);
+      state.story.style.setProperty('--story-copy-shift', `${(1 - reveal) * 32}px`);
+      state.story.style.setProperty('--story-progress', progress);
+
+      if (!state.video?.duration || !Number.isFinite(state.video.duration)) return;
+      const usableDuration = Math.max(0, state.video.duration - 0.08);
+      state.targetTime = progress * usableDuration;
+      const delta = state.targetTime - state.displayedTime;
+      const response = mobile.matches ? 0.52 : 0.44;
+      state.displayedTime = reducedMotion || Math.abs(delta) < (1 / frameRate)
+        ? state.targetTime
+        : state.displayedTime + (delta * response);
+      const quantizedTime = Math.round(state.displayedTime * frameRate) / frameRate;
+      if (Math.abs(state.video.currentTime - quantizedTime) > 0.025) {
+        state.video.currentTime = quantizedTime;
+      }
+      const currentFrame = Math.round(quantizedTime * frameRate);
+      const totalFrames = Math.round(usableDuration * frameRate);
+      state.story.dataset.frame = `${currentFrame}/${totalFrames}`;
+      if (Math.abs(state.targetTime - state.displayedTime) >= (1 / frameRate)) {
+        needsAnotherFrame = true;
+      }
+    });
+
+    if (needsAnotherFrame) animationFrame = window.requestAnimationFrame(render);
+  };
+
+  const requestRender = () => {
+    if (!animationFrame) animationFrame = window.requestAnimationFrame(render);
+  };
+
+  states.forEach((state) => state.video?.addEventListener('loadedmetadata', requestRender));
+  window.addEventListener('scroll', requestRender, { passive: true });
+  window.addEventListener('resize', requestRender);
+  requestRender();
 }
 
 function initHeroVideo(root) {
@@ -462,6 +477,7 @@ function initMenu(root) {
 export function initSiteExperience(root) {
   initHeroVideo(root);
   initScrollVideo(root);
+  initPourStories(root);
   initCollection(root);
   initEvents(root);
   initMenu(root);

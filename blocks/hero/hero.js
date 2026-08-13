@@ -68,12 +68,5 @@ export default function decorate(block) {
     }),
     createElement('i'),
   );
-  const credit = createElement('a', {
-    className: 'hero-media-credit',
-    text: 'Film: binary Ego / Pexels',
-  });
-  credit.href = 'https://www.pexels.com/video/a-barman-placing-a-glass-with-ice-cubes-on-the-counter-14058813/';
-  credit.target = '_blank';
-  credit.rel = 'noopener noreferrer';
-  block.append(backdrop, content, cue, credit);
+  block.append(backdrop, content, cue);
 }
