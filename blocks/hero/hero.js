@@ -6,7 +6,7 @@
  * | Eyebrow text |
  * | Main heading |
  * | Supporting copy |
- * | Call to book | tel:+34XXXXXXXXX |
+ * | Call to book | tel:+34602127026 |
  * | Get directions | Google Maps URL |
  * | Image |
  */
@@ -34,7 +34,17 @@ function getPicture(row) {
 }
 
 function appendAction(actions, label, href, modifier) {
-  if (!label || !href) return;
+  if (!label || !href || /x{3,}|placeholder/i.test(href)) return;
+
+  let url;
+  try {
+    url = new URL(href, window.location.href);
+  } catch (error) {
+    return;
+  }
+
+  if (!['http:', 'https:', 'tel:', 'mailto:'].includes(url.protocol)) return;
+  if (url.protocol === 'tel:' && !/^\+?[0-9 ()-]{7,}$/.test(url.pathname)) return;
 
   const action = createElement('a', {
     className: `button hero-action ${modifier}`.trim(),
@@ -42,6 +52,10 @@ function appendAction(actions, label, href, modifier) {
   });
 
   action.href = href;
+  if (url.protocol.startsWith('http') && url.origin !== window.location.origin) {
+    action.target = '_blank';
+    action.rel = 'noopener noreferrer';
+  }
   actions.append(action);
 }
 
@@ -85,6 +99,8 @@ export default function decorate(block) {
   block.append(content);
 
   if (picture) {
+    const image = picture.querySelector('img');
+    if (image && !image.alt) image.alt = heading;
     const media = createElement('div', { className: 'hero-media' });
     media.append(picture);
     block.append(media);

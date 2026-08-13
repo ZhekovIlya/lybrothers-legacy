@@ -90,5 +90,10 @@ export default function decorate(block) {
   });
 
   block.textContent = '';
+  if (!list.children.length) {
+    block.hidden = true;
+    return;
+  }
+
   block.append(list);
 }

@@ -59,7 +59,27 @@ body.appear {
 }
 
 main {
-  min-height: 100vh;
+  min-height: calc(100vh - var(--nav-height, 0px));
+}
+
+header .header,
+footer .footer {
+  visibility: hidden;
+}
+
+header .header[data-block-status="loaded"],
+footer .footer[data-block-status="loaded"] {
+  visibility: visible;
+}
+
+main > .section {
+  margin: 0;
+  padding: var(--spacing-xl) var(--spacing-m);
+}
+
+main > .section > div {
+  max-width: var(--max-width);
+  margin-inline: auto;
 }
 
 p {
@@ -71,18 +91,9 @@ ol {
   padding-inline-start: 1.25rem;
 }
 
-section {
-  padding: var(--spacing-xl) var(--spacing-m);
-}
-
-section > * {
-  max-width: var(--max-width);
-  margin-inline: auto;
-}
-
-section > p,
-section > ul,
-section > ol {
+main .default-content-wrapper > p,
+main .default-content-wrapper > ul,
+main .default-content-wrapper > ol {
   max-width: var(--content-width);
 }
 
@@ -97,6 +108,7 @@ h6 {
   font-family: var(--font-heading);
   font-weight: 600;
   line-height: var(--heading-line-height);
+  text-wrap: balance;
 }
 
 h1 {
@@ -118,12 +130,18 @@ a {
   color: var(--link-color);
   text-decoration-thickness: 0.08em;
   text-underline-offset: 0.18em;
-  transition: color var(--transition-fast), text-decoration-color var(--transition-fast);
+  transition:
+    color var(--transition-fast),
+    text-decoration-color var(--transition-fast);
 }
 
-a:hover,
-a:focus-visible {
+a:hover {
   color: var(--link-hover-color);
+}
+
+:focus-visible {
+  outline: 3px solid var(--color-gold-light);
+  outline-offset: 4px;
 }
 
 img,
@@ -159,7 +177,10 @@ a.button {
   line-height: 1;
   text-decoration: none;
   cursor: pointer;
-  transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast);
 }
 
 button:hover,
@@ -173,57 +194,38 @@ a.button:focus-visible {
   color: var(--color-black);
 }
 
-hr {
-  width: min(var(--max-width), calc(100% - var(--spacing-m) * 2));
-  margin: var(--spacing-xl) auto;
-  border: 0;
-  border-top: 1px solid var(--border-color);
+.button.secondary {
+  background: transparent;
+  color: var(--color-gold-light);
 }
 
-.section-intro {
-  max-width: var(--content-width);
-  margin-inline: auto;
-  text-align: center;
+.button.secondary:hover,
+.button.secondary:focus-visible {
+  background: var(--color-gold-light);
+  color: var(--color-black);
 }
 
-dialog {
-  width: min(92vw, 34rem);
-  padding: var(--spacing-l);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-m);
-  background: var(--color-ink);
-  color: var(--text-color);
-  box-shadow: 0 1.5rem 4rem rgb(0 0 0 / 45%);
-}
-
-dialog::backdrop {
-  background: rgb(0 0 0 / 72%);
-  backdrop-filter: blur(0.25rem);
-}
-
-dialog form {
-  display: grid;
-  gap: var(--spacing-m);
-}
-
-dialog label {
-  display: grid;
-  gap: var(--spacing-xs);
-}
-
-dialog input,
-dialog select,
-dialog textarea {
-  width: 100%;
-  padding: 0.75rem 0.875rem;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-s);
-  background: var(--color-black);
-  color: var(--text-color);
+.icon:empty {
+  display: none;
 }
 
 @media (width >= 900px) {
-  section {
+  main > .section {
     padding-block: var(--spacing-xxl);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

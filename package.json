@@ -4,6 +4,7 @@
   "version": "1.0.0",
   "description": "Edge Delivery Services project for lybrothers.es",
   "scripts": {
+    "start": "aem up",
     "lint:js": "eslint .",
     "lint:css": "stylelint \"blocks/**/*.css\" \"styles/*.css\"",
     "lint": "npm run lint:js && npm run lint:css",
@@ -11,6 +12,7 @@
   },
   "license": "UNLICENSED",
   "devDependencies": {
+    "@adobe/aem-cli": "16.20.13",
     "@babel/eslint-parser": "7.29.7",
     "eslint": "8.57.1",
     "eslint-config-airbnb-base": "15.0.0",
