@@ -44,6 +44,7 @@ function toClassName(name) {
  * @param {string} name
  * @returns {string}
  */
+// eslint-disable-next-line import/prefer-default-export
 export function getMetadata(name) {
   const attr = name && name.toLowerCase();
   return [...document.head.querySelectorAll(`meta[name="${attr}"], meta[property="${attr}"]`)]
@@ -124,7 +125,7 @@ function decorateBlocks(main) {
  * @returns {Promise<void>}
  */
 async function loadBlock(block) {
-  const blockName = block.dataset.blockName;
+  const { blockName } = block.dataset;
   if (!blockName || block.dataset.blockStatus === 'loaded') return;
 
   block.dataset.blockStatus = 'loading';

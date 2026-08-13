@@ -4,7 +4,7 @@ Foundational Adobe Edge Delivery Services project for migrating lybrothers.es fr
 
 ## Architecture
 
-- **Authoring:** `da.live` with a Google Drive mount configured in `fstab.yaml`.
+- **Authoring:** Google Docs, via a Google Drive folder mounted in `fstab.yaml`. No Adobe/AEM license required.
 - **Delivery:** default `aem.page` and `aem.live` preview/publish URLs.
 - **Frontend:** vanilla JavaScript, native browser APIs, and scoped CSS. No jQuery, libraries, frameworks, custom domain routing, or Cloudflare Worker setup.
 
@@ -17,6 +17,10 @@ Foundational Adobe Edge Delivery Services project for migrating lybrothers.es fr
 
 ## Example hero authoring
 
+> **Important:** the last row must be an actual **inserted image** (Insert ▸ Image in
+> Google Docs), not typed text like `hero-image.jpg`. Typed filenames get treated as an
+> icon reference and render as nothing — they are not a working image placeholder.
+
 | Hero |
 | --- |
 | Barcelona Speakeasy |
@@ -24,17 +28,21 @@ Foundational Adobe Edge Delivery Services project for migrating lybrothers.es fr
 | Cócteles clásicos, recetas propias y una atmósfera íntima en Barcelona. |
 | Call here | tel:+34XXXXXXXXX |
 | Find directions | https://www.google.com/maps/search/?api=1&query=Ly%20Brothers%20Barcelona |
-| hero-image.jpg |
+| *(inserted image)* |
 
 ## Example menu authoring
 
+> Same rule applies: each row below must contain a real inserted image, not text.
+
 | Cards |
 | --- |
-| menu-page-1.jpg |
-| menu-page-2.jpg |
+| *(inserted image)* |
+| *(inserted image)* |
 
 ## Setup
 
-1. Replace `YOUR_GOOGLE_DRIVE_FOLDER_ID` in `fstab.yaml` with the folder connected to `da.live`.
-2. Connect the repository to the EDS project.
-3. Preview content on the default `aem.page` URL and publish to the default `aem.live` URL.
+1. Create/confirm the Google Drive folder for this site and share it (Editor) with `helix@adobe.com`.
+2. Point `fstab.yaml`'s `mountpoints: /:` at that folder's URL.
+3. Install the [AEM Code Sync GitHub App](https://github.com/apps/aem-code-sync/installations/new) on this repo.
+4. Author `index` (see examples above) in the mounted Google Drive folder, using real inserted images.
+5. Preview content on the default `aem.page` URL (via Sidekick, or `POST https://admin.hlx.page/preview/<org>/<repo>/main/`) and publish to `aem.live` the same way.
