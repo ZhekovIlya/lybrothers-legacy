@@ -31,7 +31,11 @@ export function getPicture(row, index = 1) {
   if (!source || !/\.(avif|gif|jpe?g|png|webp)(\?.*)?$/i.test(source)) return null;
   const image = document.createElement('img');
   image.src = source;
-  image.alt = cell?.textContent?.trim() || '';
+  const filename = source.split('/').pop()?.split('?')[0] || '';
+  image.alt = filename
+    .replace(/\.[^.]+$/, '')
+    .replace(/[-_]+/g, ' ')
+    .replace(/^./, (character) => character.toUpperCase());
   image.loading = 'lazy';
   return image;
 }

@@ -998,12 +998,4 @@ a.button.button-outline:focus-visible {
   .scroll-cue i {
     animation: none;
   }
-
-  .scroll-ritual {
-    height: 100svh;
-  }
-
-  .ritual-sticky {
-    position: relative;
-  }
 }

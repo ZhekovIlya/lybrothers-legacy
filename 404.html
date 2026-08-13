@@ -4,38 +4,36 @@
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <link rel="icon" type="image/png" href="/favicon.png"/>
+  <link rel="stylesheet" href="/styles/styles.css"/>
   <title>Page not found</title>
   <meta name="robots" content="noindex"/>
   <style>
-    body {
+    .not-found {
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
       min-height: 100vh;
-      margin: 0;
+      padding: 2rem;
       background: #0d0907;
       color: #f7efe4;
       font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
       text-align: center;
     }
 
-    main {
-      padding: 2rem;
-    }
-
-    h1 {
+    .not-found h1 {
       margin: 0 0 1rem;
       color: #fffaf3;
       font-family: georgia, "Times New Roman", serif;
       font-size: clamp(2.5rem, 8vw, 5rem);
     }
 
-    p {
+    .not-found p {
       margin: 0 0 1.5rem;
       color: #c9b7a0;
     }
 
-    a {
+    .not-found a {
       display: inline-flex;
       padding: 0.75rem 1.5rem;
       border-radius: 999px;
@@ -45,17 +43,31 @@
       text-decoration: none;
     }
 
-    a:hover,
-    a:focus-visible {
+    .not-found a:hover,
+    .not-found a:focus-visible {
       background: #e4c37a;
     }
   </style>
 </head>
 <body>
-  <main>
+  <header hidden></header>
+  <main hidden></main>
+  <footer hidden></footer>
+  <div class="not-found">
     <h1>404</h1>
     <p>This page doesn&rsquo;t exist.</p>
-    <a href="/">Back to Ly Brothers</a>
-  </main>
+    <a href="/">Back to LY Brothers</a>
+  </div>
+  <script type="module">
+    const path = window.location.pathname.replace(/\/+$/, '') || '/';
+    const siteRoutes = new Set(['/home', '/menu', '/contact']);
+
+    if (siteRoutes.has(path)) {
+      document.querySelector('.not-found').remove();
+      document.querySelectorAll('body > header, body > main, body > footer')
+        .forEach((element) => element.removeAttribute('hidden'));
+      await import('/scripts/scripts.js');
+    }
+  </script>
 </body>
 </html>
