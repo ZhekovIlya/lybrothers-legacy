@@ -71,8 +71,10 @@ Sidekick-capable browser available for that final step.
 
 The Discover cue aligns the ritual to the viewport and starts its first
 chapter. The video is divided evenly across the authored `Step` rows. Each
-chapter loops while active; scrolling or tapping a step changes both the active
-step number and the corresponding video segment.
+chapter loops while active. Native scroll snapping advances exactly one
+full-screen chapter at a time, and tapping a step snaps directly to its matching
+video segment. The next scroll after chapter three exits to the following
+cocktail story.
 
 ### Pour Stories
 

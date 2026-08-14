@@ -43,6 +43,10 @@ html {
   scroll-behavior: smooth;
 }
 
+html.ritual-snap-active {
+  scroll-snap-type: y mandatory;
+}
+
 [id] {
   scroll-margin-top: calc(var(--nav-height, 0px) + var(--spacing-s));
 }
@@ -443,7 +447,7 @@ main > .section.home-hero > .home-hero-backdrop {
 }
 
 main > .section.scroll-ritual {
-  height: 240svh;
+  height: 300svh;
   padding: 0;
   scroll-margin-top: 0;
 }
@@ -467,6 +471,22 @@ main > .section.scroll-ritual > .ritual-sticky {
   height: 100svh;
   min-height: 42rem;
   background: #050505;
+}
+
+.ritual-snap-track {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ritual-snap-point {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
 }
 
 .ritual-video,
@@ -1352,7 +1372,7 @@ main > .section.contact-page {
 
 @media (width < 600px) {
   main > .section.scroll-ritual {
-    height: 220svh;
+    height: 300svh;
   }
 
   .home-hero::before {

@@ -98,7 +98,7 @@ function homeMarkup() {
               <div><h3>Pour the reveal</h3><p>The final detail is always yours.</p></div>
             </button>
           </div>
-          <p class="ritual-hint">Scroll to change chapter · each part loops</p>
+          <p class="ritual-hint">One scroll · one chapter · each part loops</p>
         </div>
         <div class="ritual-progress" aria-hidden="true"><i></i></div>
       </div>
@@ -379,6 +379,20 @@ function initScrollVideo(root) {
   let scrollFrame;
   let userPaused = false;
 
+  const snapTrack = document.createElement('div');
+  snapTrack.className = 'ritual-snap-track';
+  snapTrack.setAttribute('aria-hidden', 'true');
+  Array.from({ length: segmentCount + 1 }).forEach((unused, index) => {
+    const snapPoint = document.createElement('i');
+    snapPoint.className = 'ritual-snap-point';
+    snapPoint.dataset.snap = `${index}`;
+    snapPoint.style.top = index === segmentCount
+      ? 'calc(100% - 1px)'
+      : `${index * 100}svh`;
+    snapTrack.append(snapPoint);
+  });
+  scrollRegion.append(snapTrack);
+
   const getSegmentBounds = (index) => {
     const duration = Number.isFinite(video.duration) ? video.duration : 0;
     const segmentDuration = duration / segmentCount;
@@ -453,8 +467,13 @@ function initScrollVideo(root) {
     scrollFrame = null;
     const rect = scrollRegion.getBoundingClientRect();
     const travel = Math.max(scrollRegion.offsetHeight - window.innerHeight, 1);
-    const scrollProgress = clamp(-rect.top / travel);
-    const nextIndex = Math.min(segmentCount - 1, Math.floor(scrollProgress * segmentCount));
+    const snapDistance = Math.max(travel / Math.max(segmentCount - 1, 1), 1);
+    const nextIndex = Math.max(
+      0,
+      Math.min(segmentCount - 1, Math.round(-rect.top / snapDistance)),
+    );
+    const snapActive = rect.top < window.innerHeight && rect.bottom > 1;
+    document.documentElement.classList.toggle('ritual-snap-active', snapActive);
     const aligned = rect.top <= 1 && rect.bottom >= window.innerHeight - 1;
     setActiveSegment(nextIndex, aligned);
     if (!aligned && (rect.bottom <= 0 || rect.top >= window.innerHeight)) video.pause();
@@ -512,9 +531,9 @@ function initScrollVideo(root) {
     userPaused = false;
     const regionTop = window.scrollY + scrollRegion.getBoundingClientRect().top;
     const travel = Math.max(scrollRegion.offsetHeight - window.innerHeight, 0);
-    const targetProgress = (index + 0.5) / segmentCount;
+    const snapDistance = travel / Math.max(segmentCount - 1, 1);
     window.scrollTo({
-      top: regionTop + (travel * targetProgress),
+      top: regionTop + (snapDistance * index),
       behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
     });
   }));
