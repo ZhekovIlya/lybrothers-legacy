@@ -1,5 +1,7 @@
 import { loadSections } from '../../scripts/aem.js';
-import { decorateMain } from '../../scripts/scripts.js';
+// Keep this URL identical to the versioned entry in head.html to avoid duplicate initialization.
+// eslint-disable-next-line import/no-unresolved
+import { decorateMain } from '../../scripts/scripts.js?ritual-snap-v2';
 
 export async function loadFragment(path) {
   if (!path || !path.startsWith('/') || path.startsWith('//')) return null;
