@@ -72,15 +72,15 @@ function createFallbackTools() {
   return wrapper;
 }
 
-function createTopbar() {
-  const topbar = document.createElement('div');
-  topbar.className = 'site-topbar';
-  topbar.innerHTML = `
-    <div>
-      <a href="https://maps.app.goo.gl/PwqVrGvxxgDSQeHF8" target="_blank" rel="noopener noreferrer">Carrer de Lancaster, 20 · Barcelona</a>
-      <a href="tel:+34602127026">+34 602 12 70 26</a>
-    </div>`;
-  return topbar;
+function createMobileDirections() {
+  const link = document.createElement('a');
+  link.className = 'nav-directions';
+  link.href = 'https://maps.app.goo.gl/PwqVrGvxxgDSQeHF8';
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = 'Find the Bar';
+  link.setAttribute('aria-label', 'How to get to LY Brothers cocktail bar');
+  return link;
 }
 
 export default async function decorate(block) {
@@ -132,6 +132,7 @@ export default async function decorate(block) {
     setMenuState(nav, nav.dataset.expanded !== 'true');
   });
   nav.prepend(toggle);
+  nav.append(createMobileDirections());
 
   nav.addEventListener('keydown', (event) => {
     if (event.key === 'Escape' && nav.dataset.expanded === 'true') {
@@ -153,6 +154,6 @@ export default async function decorate(block) {
 
   const wrapper = document.createElement('div');
   wrapper.className = 'nav-wrapper';
-  wrapper.append(createTopbar(), nav);
+  wrapper.append(nav);
   block.append(wrapper);
 }

@@ -798,6 +798,11 @@ main > .section.scroll-ritual > .ritual-sticky {
   margin-top: 1rem;
 }
 
+.door-actions .text-link {
+  min-height: 2.75rem;
+  margin-top: 0;
+}
+
 .collection {
   background: #080807;
 }

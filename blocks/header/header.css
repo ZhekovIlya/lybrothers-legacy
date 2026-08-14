@@ -13,36 +13,18 @@ header .nav-wrapper {
   z-index: 100;
   top: 0;
   width: 100%;
-  border-bottom: 1px solid rgb(255 255 255 / 12%);
-  background: rgb(8 8 7 / 88%);
+  background: linear-gradient(180deg, rgb(4 4 4 / 68%), transparent);
+  transition: background-color var(--transition-fast), backdrop-filter var(--transition-fast);
+}
+
+body.nav-open header .nav-wrapper {
+  background: rgb(8 8 7 / 96%);
   backdrop-filter: blur(1rem);
-}
-
-header .site-topbar {
-  display: none;
-  border-bottom: 1px solid rgb(255 255 255 / 9%);
-  color: var(--color-muted);
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-}
-
-header .site-topbar > div {
-  display: flex;
-  justify-content: space-between;
-  width: min(100% - 3rem, var(--max-width));
-  margin-inline: auto;
-  padding-block: 0.55rem;
-}
-
-header .site-topbar a {
-  color: inherit;
-  text-decoration: none;
 }
 
 header nav {
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: auto 1fr auto;
   align-items: center;
   width: min(100%, var(--max-width));
   min-height: var(--nav-height);
@@ -126,6 +108,7 @@ header nav[data-expanded="true"] .nav-toggle span::after {
 header .nav-brand {
   grid-row: 1;
   grid-column: 2;
+  justify-self: center;
 }
 
 header .nav-brand p,
@@ -169,6 +152,32 @@ header .nav-tools .button {
   width: 100%;
 }
 
+header .nav-directions {
+  display: inline-flex;
+  grid-row: 1;
+  grid-column: 3;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.5rem;
+  padding: 0.65rem 0.85rem;
+  border: 1px solid rgb(228 195 122 / 70%);
+  border-radius: 999px;
+  background: rgb(8 8 7 / 34%);
+  color: var(--color-gold-light);
+  font-size: 0.66rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+header .nav-directions:hover,
+header .nav-directions:focus-visible {
+  background: var(--color-gold-light);
+  color: var(--color-black);
+}
+
 body.nav-open {
   overflow: hidden;
 }
@@ -176,10 +185,6 @@ body.nav-open {
 @media (width >= 900px) {
   :root {
     --nav-height: 5.5rem;
-  }
-
-  header .site-topbar {
-    display: block;
   }
 
   header nav {
@@ -239,5 +244,9 @@ body.nav-open {
 
   header .nav-tools .button {
     width: auto;
+  }
+
+  header .nav-directions {
+    display: none;
   }
 }
