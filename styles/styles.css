@@ -473,6 +473,17 @@ main > .section.scroll-ritual > .ritual-sticky {
   object-fit: cover;
 }
 
+.ritual-video,
+.pour-story-video {
+  cursor: pointer;
+}
+
+.ritual-video:focus-visible,
+.pour-story-video:focus-visible {
+  outline: 2px solid var(--color-gold-light);
+  outline-offset: -4px;
+}
+
 .ritual-shade {
   background: linear-gradient(90deg, rgb(3 3 3 / 90%), rgb(3 3 3 / 24%) 55%, rgb(3 3 3 / 72%)),
     linear-gradient(0deg, rgb(3 3 3 / 82%), transparent 48%);

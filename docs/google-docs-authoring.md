@@ -72,9 +72,11 @@ Sidekick-capable browser available for that final step.
 ### Pour Stories
 
 Each `Story` row is one in-view film. Keep the first story set to `Left` and the
-second to `Right` to preserve the alternating composition. Each film plays once
-when it enters the viewport, then resolves into a 50/50 film-and-copy layout
-near its final frames. Page scrolling never controls or interrupts playback.
+second to `Right` to preserve the alternating composition. The first video
+frame remains visible while the film approaches. Each film plays once when it
+is nearly fully aligned in the viewport, then resolves into a 50/50
+film-and-copy layout near its final frames. Page scrolling never controls or
+interrupts playback. Tap or click a film to pause or resume it.
 
 | Pour Stories | | | | | | |
 | --- | --- | --- | --- | --- | --- | --- |

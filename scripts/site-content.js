@@ -98,7 +98,7 @@ function homeMarkup() {
               <div><h3>Pour the reveal</h3><p>The final detail is always yours.</p></div>
             </button>
           </div>
-          <p class="ritual-hint">Plays in view · tap a step</p>
+          <p class="ritual-hint">Plays when aligned · tap film to pause</p>
         </div>
         <div class="ritual-progress" aria-hidden="true"><i></i></div>
       </div>
@@ -248,10 +248,17 @@ function clamp(value, minimum = 0, maximum = 1) {
   return Math.max(minimum, Math.min(maximum, value));
 }
 
-function observeVideoPlayback(video, container, sync, reducedMotion) {
+function observeVideoPlayback(video, container, sync) {
   let animationFrame;
   let inView = false;
   let started = false;
+  const description = video.getAttribute('aria-label') || 'Cocktail film';
+
+  const updateControlLabel = () => {
+    let action = 'Pause';
+    if (video.paused) action = video.ended ? 'Replay' : 'Play';
+    video.setAttribute('aria-label', `${description}. ${action} film`);
+  };
 
   const render = () => {
     animationFrame = null;
@@ -264,7 +271,11 @@ function observeVideoPlayback(video, container, sync, reducedMotion) {
   };
 
   const play = (time) => {
-    if (Number.isFinite(time)) video.currentTime = time;
+    if (Number.isFinite(time)) {
+      video.currentTime = time;
+    } else if (video.ended) {
+      video.currentTime = 0.01;
+    }
     started = true;
     container.classList.add('is-playing');
     container.classList.remove('is-complete');
@@ -275,26 +286,56 @@ function observeVideoPlayback(video, container, sync, reducedMotion) {
   };
 
   const observer = new IntersectionObserver((entries) => {
-    inView = entries.some((entry) => entry.isIntersecting);
-    if (inView && !started && !reducedMotion) play();
-  }, { threshold: 0.45 });
+    inView = entries.some((entry) => (
+      entry.isIntersecting && entry.intersectionRatio >= 0.9
+    ));
+    if (inView && !started) play();
+  }, { threshold: [0, 0.9] });
 
   observer.observe(container);
   video.addEventListener('canplay', () => {
-    if (inView && !started && !reducedMotion) play();
+    if (inView && !started) play();
   });
-  video.addEventListener('play', requestRender);
+  const showFirstFrame = () => {
+    if (video.dataset.firstFrameReady) return;
+    video.dataset.firstFrameReady = 'true';
+    video.currentTime = Math.min(0.01, video.duration || 0.01);
+    video.removeAttribute('poster');
+    container.classList.add('has-first-frame');
+    sync();
+  };
+  video.addEventListener('loadeddata', showFirstFrame, { once: true });
+  video.addEventListener('play', () => {
+    requestRender();
+    updateControlLabel();
+  });
   video.addEventListener('pause', () => {
     window.cancelAnimationFrame(animationFrame);
     animationFrame = null;
     sync();
+    updateControlLabel();
   });
   video.addEventListener('ended', () => {
     container.classList.remove('is-playing');
     container.classList.add('is-complete');
     sync();
+    updateControlLabel();
   });
   video.addEventListener('loadedmetadata', sync);
+  video.addEventListener('click', () => {
+    if (video.paused) play();
+    else video.pause();
+  });
+  video.tabIndex = 0;
+  video.setAttribute('role', 'button');
+  video.addEventListener('keydown', (event) => {
+    if (!['Enter', ' '].includes(event.key)) return;
+    event.preventDefault();
+    if (video.paused) play();
+    else video.pause();
+  });
+  if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) showFirstFrame();
+  updateControlLabel();
   sync();
   return play;
 }
@@ -305,7 +346,6 @@ function initScrollVideo(root) {
 
   const video = section.querySelector('video');
   const steps = [...section.querySelectorAll('[data-step]')];
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const frameRate = 25;
   const sync = () => {
     const duration = Number.isFinite(video.duration) ? video.duration : 0;
@@ -321,7 +361,7 @@ function initScrollVideo(root) {
   };
 
   video.pause();
-  const play = observeVideoPlayback(video, section, sync, reducedMotion);
+  const play = observeVideoPlayback(video, section, sync);
   steps.forEach((step, index) => step.addEventListener('click', () => {
     const duration = Number.isFinite(video.duration) ? video.duration : 0;
     play((index / Math.max(steps.length, 1)) * duration);
@@ -332,7 +372,6 @@ function initPourStories(root) {
   const stories = [...root.querySelectorAll('[data-video-story]')];
   if (!stories.length) return;
 
-  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   const frameRate = 25;
   const states = stories.map((story) => {
     const video = story.querySelector('video');
@@ -343,8 +382,7 @@ function initPourStories(root) {
   states.forEach((state) => {
     const sync = () => {
       const duration = Number.isFinite(state.video?.duration) ? state.video.duration : 0;
-      let progress = duration ? clamp(state.video.currentTime / duration) : 0;
-      if (reducedMotion) progress = 1;
+      const progress = duration ? clamp(state.video.currentTime / duration) : 0;
       const reveal = clamp((progress - 0.78) / 0.2);
       const split = window.matchMedia('(width < 600px)').matches ? 55 : 50;
       state.story.style.setProperty('--story-media-size', `${100 - (reveal * split)}%`);
@@ -355,7 +393,7 @@ function initPourStories(root) {
       const totalFrames = Math.round(duration * frameRate);
       state.story.dataset.frame = `${currentFrame}/${totalFrames}`;
     };
-    observeVideoPlayback(state.video, state.story, sync, reducedMotion);
+    observeVideoPlayback(state.video, state.story, sync);
   });
 }
 
