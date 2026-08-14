@@ -9,7 +9,9 @@ import {
   loadSections,
   waitForFirstImage,
 } from './aem.js';
-import { initSiteExperience, renderFallbackPage } from './site-content.js';
+// The query keeps interaction updates from being masked by a stale edge/browser module cache.
+// eslint-disable-next-line import/no-unresolved
+import { initSiteExperience, renderFallbackPage } from './site-content.js?ritual-snap-v2';
 
 if (window.trustedTypes && window.trustedTypes.createPolicy) {
   const innerPolicy = window.trustedTypes.createPolicy('ly-brothers-inner', {
