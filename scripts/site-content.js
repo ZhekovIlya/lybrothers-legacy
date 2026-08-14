@@ -343,7 +343,8 @@ function initPourStories(root) {
   states.forEach((state) => {
     const sync = () => {
       const duration = Number.isFinite(state.video?.duration) ? state.video.duration : 0;
-      const progress = duration ? clamp(state.video.currentTime / duration) : 0;
+      let progress = duration ? clamp(state.video.currentTime / duration) : 0;
+      if (reducedMotion) progress = 1;
       const reveal = clamp((progress - 0.78) / 0.2);
       const split = window.matchMedia('(width < 600px)').matches ? 55 : 50;
       state.story.style.setProperty('--story-media-size', `${100 - (reveal * split)}%`);
