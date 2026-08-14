@@ -15,7 +15,7 @@ function siteHeader(title, eyebrow, copy) {
 function pourStoriesMarkup() {
   return `
     <section class="section pour-stories" data-section-status="loaded" data-pour-stories aria-label="Two cocktails, told through the pour">
-      <article class="pour-story is-video-left is-short" data-video-story style="--story-media-size: 100%; --story-reveal: 0;">
+      <article class="pour-story is-video-left is-short" data-video-story>
         <div class="pour-story-sticky">
           <div class="pour-story-copy">
             <div>
@@ -32,7 +32,7 @@ function pourStoriesMarkup() {
           <div class="pour-story-progress" aria-hidden="true"><span>01</span><i></i></div>
         </div>
       </article>
-      <article class="pour-story is-video-right" data-video-story style="--story-media-size: 100%; --story-reveal: 0;">
+      <article class="pour-story is-video-right" data-video-story>
         <div class="pour-story-sticky">
           <div class="pour-story-copy">
             <div>
@@ -253,6 +253,7 @@ function observeVideoPlayback(video, container, sync) {
   let alignmentFrame;
   let inView = false;
   let started = false;
+  let retryPlayback = () => {};
   const description = video.getAttribute('aria-label') || 'Cocktail film';
 
   const updateControlLabel = () => {
@@ -284,6 +285,7 @@ function observeVideoPlayback(video, container, sync) {
       started = false;
       container.classList.remove('is-playing');
       updateControlLabel();
+      if (inView) window.setTimeout(retryPlayback, 250);
     });
   };
 
@@ -302,6 +304,7 @@ function observeVideoPlayback(video, container, sync) {
     if (alignmentFrame) return;
     alignmentFrame = window.requestAnimationFrame(checkAlignment);
   };
+  retryPlayback = requestAlignmentCheck;
 
   const observer = new IntersectionObserver((entries) => {
     inView = entries.some((entry) => (

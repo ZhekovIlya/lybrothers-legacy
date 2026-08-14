@@ -38,9 +38,6 @@ function createStory(story, index) {
     className: `pour-story is-video-${story.side}${index === 0 ? ' is-short' : ''}`,
   });
   article.dataset.videoStory = '';
-  article.style.setProperty('--story-media-size', '100%');
-  article.style.setProperty('--story-reveal', '0');
-  article.style.setProperty('--story-copy-shift', '32px');
 
   const sticky = createElement('div', { className: 'pour-story-sticky' });
   const media = createElement('div', { className: 'pour-story-media' });
