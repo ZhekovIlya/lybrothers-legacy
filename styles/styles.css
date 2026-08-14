@@ -435,10 +435,10 @@ main > .section.home-hero > .home-hero-backdrop {
 
 .scroll-ritual {
   --scroll-progress: 0;
-  --scroll-target: 0;
 
   position: relative;
-  height: 380vh;
+  height: 100svh;
+  min-height: 42rem;
   margin: 0;
   padding: 0;
   background: #050505;
@@ -454,10 +454,10 @@ main > .section.scroll-ritual > .ritual-sticky {
 }
 
 .ritual-sticky {
-  position: sticky;
-  top: 0;
+  position: relative;
   overflow: hidden;
   height: 100svh;
+  min-height: 42rem;
   background: #050505;
 }
 
@@ -569,6 +569,22 @@ main > .section.scroll-ritual > .ritual-sticky {
   text-transform: uppercase;
 }
 
+.ritual-hint::before {
+  display: inline-block;
+  width: 0.42rem;
+  height: 0.42rem;
+  margin-right: 0.55rem;
+  border: 1px solid var(--color-gold-light);
+  border-radius: 50%;
+  content: "";
+  vertical-align: -0.04rem;
+}
+
+.scroll-ritual.is-playing .ritual-hint::before {
+  background: var(--color-gold-light);
+  box-shadow: 0 0 0 0.25rem rgb(228 195 122 / 14%);
+}
+
 .ritual-progress {
   position: absolute;
   z-index: 2;
@@ -602,19 +618,20 @@ main > .section.scroll-ritual > .ritual-sticky {
   --story-copy-shift: 32px;
 
   position: relative;
-  height: 300vh;
+  height: 100svh;
+  min-height: 42rem;
   background: #050505;
 }
 
 .pour-story.is-short {
-  height: 220vh;
+  height: 100svh;
 }
 
 .pour-story-sticky {
-  position: sticky;
-  top: 0;
+  position: relative;
   overflow: hidden;
   height: 100svh;
+  min-height: 42rem;
   background: #080807;
   isolation: isolate;
 }
@@ -631,7 +648,7 @@ main > .section.scroll-ritual > .ritual-sticky {
   overflow: hidden;
   width: var(--story-media-size);
   background: #080807;
-  transition: width 80ms linear;
+  transition: width 160ms linear;
 }
 
 .pour-story.is-video-left .pour-story-media,
@@ -1313,7 +1330,7 @@ main > .section.contact-page {
 
 @media (width < 600px) {
   .scroll-ritual {
-    height: 340vh;
+    height: 100svh;
   }
 
   .home-hero::before {
@@ -1352,11 +1369,11 @@ main > .section.contact-page {
   }
 
   .pour-story {
-    height: 320vh;
+    height: 100svh;
   }
 
   .pour-story.is-short {
-    height: 230vh;
+    height: 100svh;
   }
 
   .pour-story-media {
@@ -1364,7 +1381,7 @@ main > .section.contact-page {
     left: 0;
     width: 100%;
     height: var(--story-media-size);
-    transition: height 80ms linear;
+    transition: height 160ms linear;
   }
 
   .pour-story.is-video-left .pour-story-media {

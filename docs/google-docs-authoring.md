@@ -32,10 +32,10 @@ path into the `Video` row of the Hero, Scroll Ritual, or Pour Stories table.
 This can all be done from a phone browser that supports Sidekick; the Google
 Docs app alone can edit the URL but cannot publish the MP4.
 
-Keep hero loops short, silent, landscape, and preferably below 8 MB. Scroll
-videos should be landscape MP4 files with frequent keyframes; clips around
-8â€“15 seconds give the smoothest frame-by-frame result. The `Image` or `Poster`
-row remains the fallback while video loads or when a device blocks playback.
+Keep hero loops short, silent, landscape, and preferably below 8 MB. In-view
+films should be silent MP4 files and ideally stay below 20 seconds so visitors
+reach the copy reveal without waiting. The `Image` or `Poster` row remains the
+fallback while video loads or when a device blocks playback.
 
 Editing copy and inserting images is fully phone-friendly. Previewing and
 publishing still uses the AEM Sidekick workflow described below, so keep a
@@ -71,9 +71,10 @@ Sidekick-capable browser available for that final step.
 
 ### Pour Stories
 
-Each `Story` row is one scroll film. Keep the first story set to `Left` and the
-second to `Right` to preserve the alternating composition. The film starts full
-screen and resolves into a 50/50 film-and-copy layout near its final frames.
+Each `Story` row is one in-view film. Keep the first story set to `Left` and the
+second to `Right` to preserve the alternating composition. Each film plays once
+when it enters the viewport, then resolves into a 50/50 film-and-copy layout
+near its final frames. Page scrolling never controls or interrupts playback.
 
 | Pour Stories | | | | | | |
 | --- | --- | --- | --- | --- | --- | --- |

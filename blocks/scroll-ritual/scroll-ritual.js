@@ -80,7 +80,7 @@ export default function decorate(block) {
   progress.append(createElement('i'));
   const hint = createElement('p', {
     className: 'ritual-hint',
-    text: 'Scroll to mix · tap a step',
+    text: 'Plays in view · tap a step',
   });
   layout.append(title, stepList, hint);
   sticky.append(video, shade, layout, progress);

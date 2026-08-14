@@ -98,7 +98,7 @@ function homeMarkup() {
               <div><h3>Pour the reveal</h3><p>The final detail is always yours.</p></div>
             </button>
           </div>
-          <p class="ritual-hint">Scroll to mix · tap a step</p>
+          <p class="ritual-hint">Plays in view · tap a step</p>
         </div>
         <div class="ritual-progress" aria-hidden="true"><i></i></div>
       </div>
@@ -248,9 +248,55 @@ function clamp(value, minimum = 0, maximum = 1) {
   return Math.max(minimum, Math.min(maximum, value));
 }
 
-function getTrackProgress(track) {
-  const travel = Math.max(track.offsetHeight - window.innerHeight, 1);
-  return clamp(-track.getBoundingClientRect().top / travel);
+function observeVideoPlayback(video, container, sync, reducedMotion) {
+  let animationFrame;
+  let inView = false;
+  let started = false;
+
+  const render = () => {
+    animationFrame = null;
+    sync();
+    if (!video.paused && !video.ended) animationFrame = window.requestAnimationFrame(render);
+  };
+
+  const requestRender = () => {
+    if (!animationFrame) animationFrame = window.requestAnimationFrame(render);
+  };
+
+  const play = (time) => {
+    if (Number.isFinite(time)) video.currentTime = time;
+    started = true;
+    container.classList.add('is-playing');
+    container.classList.remove('is-complete');
+    video.play().catch(() => {
+      started = false;
+      container.classList.remove('is-playing');
+    });
+  };
+
+  const observer = new IntersectionObserver((entries) => {
+    inView = entries.some((entry) => entry.isIntersecting);
+    if (inView && !started && !reducedMotion) play();
+  }, { threshold: 0.45 });
+
+  observer.observe(container);
+  video.addEventListener('canplay', () => {
+    if (inView && !started && !reducedMotion) play();
+  });
+  video.addEventListener('play', requestRender);
+  video.addEventListener('pause', () => {
+    window.cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+    sync();
+  });
+  video.addEventListener('ended', () => {
+    container.classList.remove('is-playing');
+    container.classList.add('is-complete');
+    sync();
+  });
+  video.addEventListener('loadedmetadata', sync);
+  sync();
+  return play;
 }
 
 function initScrollVideo(root) {
@@ -259,73 +305,27 @@ function initScrollVideo(root) {
 
   const video = section.querySelector('video');
   const steps = [...section.querySelectorAll('[data-step]')];
-  const track = section.closest('.section') || section;
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const mobile = window.matchMedia('(width < 600px)');
   const frameRate = 25;
-  let animationFrame;
-  let displayedTime = 0;
-  let targetTime = 0;
-
-  const render = () => {
-    animationFrame = null;
-    const scrollProgress = getTrackProgress(track);
-    section.style.setProperty('--scroll-target', scrollProgress);
-
-    if (video.duration && Number.isFinite(video.duration)) {
-      const usableDuration = Math.max(0, video.duration - 0.08);
-      targetTime = scrollProgress * usableDuration;
-      const delta = targetTime - displayedTime;
-      const response = mobile.matches ? 0.48 : 0.4;
-      displayedTime = reducedMotion || Math.abs(delta) < (1 / frameRate)
-        ? targetTime
-        : displayedTime + (delta * response);
-
-      const quantizedTime = Math.round(displayedTime * frameRate) / frameRate;
-      const displayedProgress = usableDuration ? quantizedTime / usableDuration : 0;
-      section.style.setProperty('--scroll-progress', clamp(displayedProgress));
-      section.dataset.frame = `${Math.round(quantizedTime * frameRate)}/${Math.round(usableDuration * frameRate)}`;
-      if (Math.abs(video.currentTime - quantizedTime) > 0.025) video.currentTime = quantizedTime;
-
-      const active = Math.min(
-        steps.length - 1,
-        Math.floor(clamp(displayedProgress) * steps.length),
-      );
-      steps.forEach((step, index) => {
-        const isActive = index === active;
-        step.classList.toggle('is-active', isActive);
-        step.setAttribute('aria-pressed', String(isActive));
-      });
-
-      if (Math.abs(targetTime - displayedTime) >= (1 / frameRate)) {
-        animationFrame = window.requestAnimationFrame(render);
-      }
-    }
-  };
-
-  const requestRender = () => {
-    if (!animationFrame) animationFrame = window.requestAnimationFrame(render);
-  };
-
-  const scrollToStep = (index) => {
-    const travel = Math.max(track.offsetHeight - window.innerHeight, 1);
-    const trackTop = window.scrollY + track.getBoundingClientRect().top;
-    const progress = (index + 0.5) / Math.max(steps.length, 1);
-    window.scrollTo({
-      top: trackTop + (progress * travel),
-      behavior: reducedMotion ? 'auto' : 'smooth',
+  const sync = () => {
+    const duration = Number.isFinite(video.duration) ? video.duration : 0;
+    const progress = duration ? clamp(video.currentTime / duration) : 0;
+    section.style.setProperty('--scroll-progress', progress);
+    section.dataset.frame = `${Math.round(video.currentTime * frameRate)}/${Math.round(duration * frameRate)}`;
+    const active = Math.min(steps.length - 1, Math.floor(progress * steps.length));
+    steps.forEach((step, index) => {
+      const isActive = index === active;
+      step.classList.toggle('is-active', isActive);
+      step.setAttribute('aria-pressed', String(isActive));
     });
   };
 
   video.pause();
-  video.addEventListener('loadedmetadata', () => {
-    displayedTime = video.currentTime;
-    requestRender();
-  });
-  window.addEventListener('scroll', requestRender, { passive: true });
-  window.addEventListener('resize', requestRender);
-  steps.forEach((step, index) => step.addEventListener('click', () => scrollToStep(index)));
-  requestRender();
+  const play = observeVideoPlayback(video, section, sync, reducedMotion);
+  steps.forEach((step, index) => step.addEventListener('click', () => {
+    const duration = Number.isFinite(video.duration) ? video.duration : 0;
+    play((index / Math.max(steps.length, 1)) * duration);
+  }));
 }
 
 function initPourStories(root) {
@@ -333,61 +333,29 @@ function initPourStories(root) {
   if (!stories.length) return;
 
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const mobile = window.matchMedia('(width < 600px)');
   const frameRate = 25;
-  let animationFrame;
   const states = stories.map((story) => {
     const video = story.querySelector('video');
     video?.pause();
-    return {
-      story, video, displayedTime: 0, targetTime: 0,
-    };
+    return { story, video };
   });
 
-  const render = () => {
-    animationFrame = null;
-    let needsAnotherFrame = false;
-
-    states.forEach((state) => {
-      const progress = getTrackProgress(state.story);
+  states.forEach((state) => {
+    const sync = () => {
+      const duration = Number.isFinite(state.video?.duration) ? state.video.duration : 0;
+      const progress = duration ? clamp(state.video.currentTime / duration) : 0;
       const reveal = clamp((progress - 0.78) / 0.2);
-      const split = mobile.matches ? 55 : 50;
+      const split = window.matchMedia('(width < 600px)').matches ? 55 : 50;
       state.story.style.setProperty('--story-media-size', `${100 - (reveal * split)}%`);
       state.story.style.setProperty('--story-reveal', reveal);
       state.story.style.setProperty('--story-copy-shift', `${(1 - reveal) * 32}px`);
       state.story.style.setProperty('--story-progress', progress);
-
-      if (!state.video?.duration || !Number.isFinite(state.video.duration)) return;
-      const usableDuration = Math.max(0, state.video.duration - 0.08);
-      state.targetTime = progress * usableDuration;
-      const delta = state.targetTime - state.displayedTime;
-      const response = mobile.matches ? 0.52 : 0.44;
-      state.displayedTime = reducedMotion || Math.abs(delta) < (1 / frameRate)
-        ? state.targetTime
-        : state.displayedTime + (delta * response);
-      const quantizedTime = Math.round(state.displayedTime * frameRate) / frameRate;
-      if (Math.abs(state.video.currentTime - quantizedTime) > 0.025) {
-        state.video.currentTime = quantizedTime;
-      }
-      const currentFrame = Math.round(quantizedTime * frameRate);
-      const totalFrames = Math.round(usableDuration * frameRate);
+      const currentFrame = Math.round(state.video.currentTime * frameRate);
+      const totalFrames = Math.round(duration * frameRate);
       state.story.dataset.frame = `${currentFrame}/${totalFrames}`;
-      if (Math.abs(state.targetTime - state.displayedTime) >= (1 / frameRate)) {
-        needsAnotherFrame = true;
-      }
-    });
-
-    if (needsAnotherFrame) animationFrame = window.requestAnimationFrame(render);
-  };
-
-  const requestRender = () => {
-    if (!animationFrame) animationFrame = window.requestAnimationFrame(render);
-  };
-
-  states.forEach((state) => state.video?.addEventListener('loadedmetadata', requestRender));
-  window.addEventListener('scroll', requestRender, { passive: true });
-  window.addEventListener('resize', requestRender);
-  requestRender();
+    };
+    observeVideoPlayback(state.video, state.story, sync, reducedMotion);
+  });
 }
 
 function initHeroVideo(root) {
