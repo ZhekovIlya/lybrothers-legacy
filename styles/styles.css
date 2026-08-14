@@ -626,10 +626,8 @@ main > .section.scroll-ritual > .ritual-sticky {
 }
 
 .pour-story {
-  --story-media-size: 100%;
-  --story-reveal: 0;
+  --story-media-size: 50%;
   --story-progress: 0;
-  --story-copy-shift: 32px;
 
   position: relative;
   height: 100svh;
@@ -662,7 +660,6 @@ main > .section.scroll-ritual > .ritual-sticky {
   overflow: hidden;
   width: var(--story-media-size);
   background: #080807;
-  transition: width 160ms linear;
 }
 
 .pour-story.is-video-left .pour-story-media,
@@ -703,12 +700,10 @@ main > .section.scroll-ritual > .ritual-sticky {
   width: 50%;
   padding: clamp(2rem, 7vw, 8rem);
   background: radial-gradient(circle at 50% 45%, rgb(201 154 74 / 11%), transparent 28rem), #0d0c0a;
-  opacity: var(--story-reveal);
 }
 
 .pour-story-copy > div {
   max-width: 34rem;
-  transform: translateY(var(--story-copy-shift));
 }
 
 .pour-story-copy h2 {
@@ -1394,8 +1389,7 @@ main > .section.contact-page {
     right: 0;
     left: 0;
     width: 100%;
-    height: var(--story-media-size);
-    transition: height 160ms linear;
+    height: 60%;
   }
 
   .pour-story.is-video-left .pour-story-media {
@@ -1412,8 +1406,9 @@ main > .section.contact-page {
     right: 0;
     left: 0;
     width: 100%;
-    height: 55%;
+    height: 40%;
     padding: 2rem 1.5rem 3.5rem;
+    border-top: 1px solid rgb(228 195 122 / 24%);
   }
 
   .pour-story.is-video-left .pour-story-copy {
@@ -1424,7 +1419,9 @@ main > .section.contact-page {
   .pour-story.is-video-right .pour-story-copy {
     top: 0;
     bottom: auto;
-    padding-top: 6.5rem;
+    padding-top: 5.5rem;
+    border-top: 0;
+    border-bottom: 1px solid rgb(228 195 122 / 24%);
   }
 
   .pour-story-copy h2 {

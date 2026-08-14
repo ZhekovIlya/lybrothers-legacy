@@ -404,11 +404,6 @@ function initPourStories(root) {
     const sync = () => {
       const duration = Number.isFinite(state.video?.duration) ? state.video.duration : 0;
       const progress = duration ? clamp(state.video.currentTime / duration) : 0;
-      const reveal = clamp((progress - 0.78) / 0.2);
-      const split = window.matchMedia('(width < 600px)').matches ? 55 : 50;
-      state.story.style.setProperty('--story-media-size', `${100 - (reveal * split)}%`);
-      state.story.style.setProperty('--story-reveal', reveal);
-      state.story.style.setProperty('--story-copy-shift', `${(1 - reveal) * 32}px`);
       state.story.style.setProperty('--story-progress', progress);
       const currentFrame = Math.round(state.video.currentTime * frameRate);
       const totalFrames = Math.round(duration * frameRate);
