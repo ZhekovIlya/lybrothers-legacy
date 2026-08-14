@@ -584,7 +584,7 @@ function initScrollVideo(root) {
   window.addEventListener('keydown', (event) => {
     const interactiveTarget = event.target instanceof Element
       && event.target.closest('a, button, input, select, textarea');
-    if (!snapActive || interactiveTarget) return;
+    if (!snapActive || (event.key === ' ' && interactiveTarget)) return;
     const downKeys = ['ArrowDown', 'PageDown'];
     const upKeys = ['ArrowUp', 'PageUp'];
     let direction = 0;
