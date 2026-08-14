@@ -443,6 +443,7 @@ function initScrollVideo(root) {
       userPaused = false;
       video.currentTime = getSegmentBounds(activeIndex).start;
       updateSteps();
+      updateControlLabel();
     }
     if (shouldPlay && !userPaused && video.paused) playActiveSegment();
     sync();
