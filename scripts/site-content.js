@@ -250,6 +250,7 @@ function clamp(value, minimum = 0, maximum = 1) {
 
 function observeVideoPlayback(video, container, sync) {
   let animationFrame;
+  let alignmentFrame;
   let inView = false;
   let started = false;
   const description = video.getAttribute('aria-label') || 'Cocktail film';
@@ -282,7 +283,24 @@ function observeVideoPlayback(video, container, sync) {
     video.play().catch(() => {
       started = false;
       container.classList.remove('is-playing');
+      updateControlLabel();
     });
+  };
+
+  const checkAlignment = () => {
+    alignmentFrame = null;
+    const rect = container.getBoundingClientRect();
+    const visibleHeight = Math.max(
+      0,
+      Math.min(window.innerHeight, rect.bottom) - Math.max(0, rect.top),
+    );
+    inView = visibleHeight / rect.height >= 0.9;
+    if (inView && !started) play();
+  };
+
+  const requestAlignmentCheck = () => {
+    if (alignmentFrame) return;
+    alignmentFrame = window.requestAnimationFrame(checkAlignment);
   };
 
   const observer = new IntersectionObserver((entries) => {
@@ -293,8 +311,10 @@ function observeVideoPlayback(video, container, sync) {
   }, { threshold: [0, 0.9] });
 
   observer.observe(container);
+  window.addEventListener('scroll', requestAlignmentCheck, { passive: true });
+  window.addEventListener('resize', requestAlignmentCheck);
   video.addEventListener('canplay', () => {
-    if (inView && !started) play();
+    requestAlignmentCheck();
   });
   const showFirstFrame = () => {
     if (video.dataset.firstFrameReady) return;
@@ -337,6 +357,7 @@ function observeVideoPlayback(video, container, sync) {
   if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) showFirstFrame();
   updateControlLabel();
   sync();
+  requestAlignmentCheck();
   return play;
 }
 
