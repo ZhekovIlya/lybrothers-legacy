@@ -376,8 +376,13 @@ function initScrollVideo(root) {
   const description = video.getAttribute('aria-label') || 'Cocktail ritual';
   let activeIndex = 0;
   let animationFrame;
+  let snapActive = false;
+  let snapLocked = false;
   let scrollFrame;
+  let touchStartY = null;
+  let touchLatestY = null;
   let userPaused = false;
+  let wheelDelta = 0;
 
   const snapTrack = document.createElement('div');
   snapTrack.className = 'ritual-snap-track';
@@ -466,13 +471,12 @@ function initScrollVideo(root) {
   const checkScroll = () => {
     scrollFrame = null;
     const rect = scrollRegion.getBoundingClientRect();
-    const travel = Math.max(scrollRegion.offsetHeight - window.innerHeight, 1);
-    const snapDistance = Math.max(travel / Math.max(segmentCount - 1, 1), 1);
+    const snapDistance = Math.max(window.innerHeight, 1);
     const nextIndex = Math.max(
       0,
       Math.min(segmentCount - 1, Math.round(-rect.top / snapDistance)),
     );
-    const snapActive = rect.top < window.innerHeight && rect.bottom > 1;
+    snapActive = rect.top < window.innerHeight && rect.bottom > 1;
     document.documentElement.classList.toggle('ritual-snap-active', snapActive);
     const aligned = rect.top <= 1 && rect.bottom >= window.innerHeight - 1;
     setActiveSegment(nextIndex, aligned);
@@ -481,6 +485,29 @@ function initScrollVideo(root) {
 
   const requestScrollCheck = () => {
     if (!scrollFrame) scrollFrame = window.requestAnimationFrame(checkScroll);
+  };
+
+  const scrollToSnap = (index) => {
+    const regionTop = window.scrollY + scrollRegion.getBoundingClientRect().top;
+    const nextIndex = Math.max(0, Math.min(segmentCount, index));
+    snapLocked = true;
+    window.scrollTo({
+      top: regionTop + (window.innerHeight * nextIndex),
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    });
+    window.setTimeout(() => {
+      snapLocked = false;
+    }, 650);
+  };
+
+  const moveOneSnap = (direction) => {
+    if (!snapActive || snapLocked) return;
+    const rect = scrollRegion.getBoundingClientRect();
+    const currentIndex = Math.max(
+      0,
+      Math.min(segmentCount, Math.round(-rect.top / Math.max(window.innerHeight, 1))),
+    );
+    scrollToSnap(currentIndex + direction);
   };
 
   video.pause();
@@ -529,13 +556,7 @@ function initScrollVideo(root) {
 
   steps.forEach((step, index) => step.addEventListener('click', () => {
     userPaused = false;
-    const regionTop = window.scrollY + scrollRegion.getBoundingClientRect().top;
-    const travel = Math.max(scrollRegion.offsetHeight - window.innerHeight, 0);
-    const snapDistance = travel / Math.max(segmentCount - 1, 1);
-    window.scrollTo({
-      top: regionTop + (snapDistance * index),
-      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
-    });
+    scrollToSnap(index);
   }));
 
   root.querySelectorAll('.scroll-cue[href="#ritual"]').forEach((cue) => {
@@ -551,6 +572,46 @@ function initScrollVideo(root) {
 
   window.addEventListener('scroll', requestScrollCheck, { passive: true });
   window.addEventListener('resize', requestScrollCheck);
+  window.addEventListener('wheel', (event) => {
+    if (!snapActive) return;
+    event.preventDefault();
+    if (snapLocked) return;
+    wheelDelta += event.deltaY;
+    if (Math.abs(wheelDelta) < 18) return;
+    moveOneSnap(wheelDelta > 0 ? 1 : -1);
+    wheelDelta = 0;
+  }, { passive: false });
+  window.addEventListener('keydown', (event) => {
+    const interactiveTarget = event.target instanceof Element
+      && event.target.closest('a, button, input, select, textarea');
+    if (!snapActive || interactiveTarget) return;
+    const downKeys = ['ArrowDown', 'PageDown'];
+    const upKeys = ['ArrowUp', 'PageUp'];
+    let direction = 0;
+    if (downKeys.includes(event.key) || (event.key === ' ' && !event.shiftKey)) direction = 1;
+    if (upKeys.includes(event.key) || (event.key === ' ' && event.shiftKey)) direction = -1;
+    if (!direction) return;
+    event.preventDefault();
+    moveOneSnap(direction);
+  });
+  window.addEventListener('touchstart', (event) => {
+    if (!snapActive || event.touches.length !== 1) return;
+    touchStartY = event.touches[0].clientY;
+    touchLatestY = touchStartY;
+  }, { passive: true });
+  window.addEventListener('touchmove', (event) => {
+    if (!snapActive || touchStartY === null || event.touches.length !== 1) return;
+    event.preventDefault();
+    touchLatestY = event.touches[0].clientY;
+  }, { passive: false });
+  window.addEventListener('touchend', () => {
+    if (touchStartY === null || touchLatestY === null) return;
+    const distance = touchStartY - touchLatestY;
+    touchStartY = null;
+    touchLatestY = null;
+    if (Math.abs(distance) < 36) return;
+    moveOneSnap(distance > 0 ? 1 : -1);
+  });
   if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
     video.currentTime = getSegmentBounds(0).start;
     video.dataset.firstFrameReady = 'true';
