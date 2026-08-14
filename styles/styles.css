@@ -43,10 +43,6 @@ html {
   scroll-behavior: smooth;
 }
 
-html.ritual-snap-active {
-  scroll-snap-type: y mandatory;
-}
-
 [id] {
   scroll-margin-top: calc(var(--nav-height, 0px) + var(--spacing-s));
 }

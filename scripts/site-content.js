@@ -503,6 +503,10 @@ function initScrollVideo(root) {
   const moveOneSnap = (direction) => {
     if (!snapActive || snapLocked) return;
     const rect = scrollRegion.getBoundingClientRect();
+    if (direction > 0 && rect.top > 1) {
+      scrollToSnap(0);
+      return;
+    }
     const currentIndex = Math.max(
       0,
       Math.min(segmentCount, Math.round(-rect.top / Math.max(window.innerHeight, 1))),
