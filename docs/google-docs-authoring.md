@@ -69,6 +69,11 @@ Sidekick-capable browser available for that final step.
 | Step | 02 | Shake the night | Ice, citrus and movement become texture. |
 | Step | 03 | Pour the reveal | The final detail is always yours. |
 
+The Discover cue aligns the ritual to the viewport and starts its first
+chapter. The video is divided evenly across the authored `Step` rows. Each
+chapter loops while active; scrolling or tapping a step changes both the active
+step number and the corresponding video segment.
+
 ### Pour Stories
 
 Each `Story` row is one in-view film. Keep the first story set to `Left` and the

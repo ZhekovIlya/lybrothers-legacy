@@ -23,7 +23,7 @@ Frontend code and authoring guidance for the LY Brothers cocktail bar website. T
 
 Complete copy-ready tables for `index`, `menu`, `contact`, `nav`, and `footer` are in [`docs/google-docs-authoring.md`](docs/google-docs-authoring.md).
 
-The legacy code-native `Spicy Margarita` block remains in the repository for compatibility. The current site uses `Scroll Ritual`, which scrubs a real cocktail-making video as the visitor scrolls.
+The legacy code-native `Spicy Margarita` block remains in the repository for compatibility. The current site uses `Scroll Ritual`, which maps scrolling to three looping chapters of a real cocktail-making video.
 
 ## Local development
 

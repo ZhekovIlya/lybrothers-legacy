@@ -437,15 +437,22 @@ main > .section.home-hero > .home-hero-backdrop {
   --scroll-progress: 0;
 
   position: relative;
-  height: 100svh;
-  min-height: 42rem;
   margin: 0;
   padding: 0;
   background: #050505;
 }
 
 main > .section.scroll-ritual {
+  height: 240svh;
   padding: 0;
+  scroll-margin-top: 0;
+}
+
+main > .section.scroll-ritual > .scroll-ritual-wrapper,
+main > .section.scroll-ritual .scroll-ritual.block {
+  height: 100%;
+  max-width: none;
+  margin: 0;
 }
 
 main > .section.scroll-ritual > .ritual-sticky {
@@ -454,7 +461,8 @@ main > .section.scroll-ritual > .ritual-sticky {
 }
 
 .ritual-sticky {
-  position: relative;
+  position: sticky;
+  top: 0;
   overflow: hidden;
   height: 100svh;
   min-height: 42rem;
@@ -1343,8 +1351,8 @@ main > .section.contact-page {
 }
 
 @media (width < 600px) {
-  .scroll-ritual {
-    height: 100svh;
+  main > .section.scroll-ritual {
+    height: 220svh;
   }
 
   .home-hero::before {

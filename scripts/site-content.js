@@ -98,7 +98,7 @@ function homeMarkup() {
               <div><h3>Pour the reveal</h3><p>The final detail is always yours.</p></div>
             </button>
           </div>
-          <p class="ritual-hint">Plays when aligned · tap film to pause</p>
+          <p class="ritual-hint">Scroll to change chapter · each part loops</p>
         </div>
         <div class="ritual-progress" aria-hidden="true"><i></i></div>
       </div>
@@ -368,28 +368,178 @@ function initScrollVideo(root) {
   const section = root.querySelector('[data-scroll-video]');
   if (!section) return;
 
+  const scrollRegion = section.closest('main > .section') || section;
   const video = section.querySelector('video');
   const steps = [...section.querySelectorAll('[data-step]')];
+  const segmentCount = Math.max(steps.length, 1);
   const frameRate = 25;
-  const sync = () => {
+  const description = video.getAttribute('aria-label') || 'Cocktail ritual';
+  let activeIndex = 0;
+  let animationFrame;
+  let scrollFrame;
+  let userPaused = false;
+
+  const getSegmentBounds = (index) => {
     const duration = Number.isFinite(video.duration) ? video.duration : 0;
-    const progress = duration ? clamp(video.currentTime / duration) : 0;
-    section.style.setProperty('--scroll-progress', progress);
-    section.dataset.frame = `${Math.round(video.currentTime * frameRate)}/${Math.round(duration * frameRate)}`;
-    const active = Math.min(steps.length - 1, Math.floor(progress * steps.length));
+    const segmentDuration = duration / segmentCount;
+    const rawStart = index * segmentDuration;
+    const rawEnd = (index + 1) * segmentDuration;
+    const openingOffset = index === 0 ? Math.min(0.65, segmentDuration * 0.25) : 0.08;
+    return {
+      start: Math.min(rawStart + openingOffset, Math.max(rawStart, rawEnd - 0.3)),
+      end: Math.max(rawStart + openingOffset + 0.25, rawEnd - 0.06),
+      duration,
+    };
+  };
+
+  const updateControlLabel = () => {
+    const action = video.paused ? 'Play' : 'Pause';
+    video.setAttribute('aria-label', `${description}. ${action} chapter ${activeIndex + 1}`);
+  };
+
+  const updateSteps = () => {
     steps.forEach((step, index) => {
-      const isActive = index === active;
+      const isActive = index === activeIndex;
       step.classList.toggle('is-active', isActive);
       step.setAttribute('aria-pressed', String(isActive));
     });
+    section.dataset.segment = `${activeIndex + 1}`;
+  };
+
+  const sync = () => {
+    const bounds = getSegmentBounds(activeIndex);
+    if (!video.paused && video.currentTime >= bounds.end) video.currentTime = bounds.start;
+    const segmentProgress = clamp(
+      (video.currentTime - bounds.start) / Math.max(bounds.end - bounds.start, 0.01),
+    );
+    const totalProgress = (activeIndex + segmentProgress) / segmentCount;
+    section.style.setProperty('--scroll-progress', totalProgress);
+    section.dataset.frame = `${Math.round(video.currentTime * frameRate)}/${Math.round(bounds.duration * frameRate)}`;
+  };
+
+  const render = () => {
+    animationFrame = null;
+    sync();
+    if (!video.paused) animationFrame = window.requestAnimationFrame(render);
+  };
+
+  const requestRender = () => {
+    if (!animationFrame) animationFrame = window.requestAnimationFrame(render);
+  };
+
+  const playActiveSegment = (restart = false) => {
+    const bounds = getSegmentBounds(activeIndex);
+    if (restart || video.currentTime < bounds.start || video.currentTime >= bounds.end) {
+      video.currentTime = bounds.start;
+    }
+    section.classList.add('is-playing');
+    video.play().catch(() => section.classList.remove('is-playing'));
+  };
+
+  const setActiveSegment = (index, shouldPlay) => {
+    const nextIndex = Math.max(0, Math.min(segmentCount - 1, index));
+    if (nextIndex !== activeIndex) {
+      activeIndex = nextIndex;
+      userPaused = false;
+      video.currentTime = getSegmentBounds(activeIndex).start;
+      updateSteps();
+    }
+    if (shouldPlay && !userPaused && video.paused) playActiveSegment();
+    sync();
+  };
+
+  const checkScroll = () => {
+    scrollFrame = null;
+    const rect = scrollRegion.getBoundingClientRect();
+    const travel = Math.max(scrollRegion.offsetHeight - window.innerHeight, 1);
+    const scrollProgress = clamp(-rect.top / travel);
+    const nextIndex = Math.min(segmentCount - 1, Math.floor(scrollProgress * segmentCount));
+    const aligned = rect.top <= 1 && rect.bottom >= window.innerHeight - 1;
+    setActiveSegment(nextIndex, aligned);
+    if (!aligned && (rect.bottom <= 0 || rect.top >= window.innerHeight)) video.pause();
+  };
+
+  const requestScrollCheck = () => {
+    if (!scrollFrame) scrollFrame = window.requestAnimationFrame(checkScroll);
   };
 
   video.pause();
-  const play = observeVideoPlayback(video, section, sync);
+  video.tabIndex = 0;
+  video.setAttribute('role', 'button');
+  video.addEventListener('loadeddata', () => {
+    video.currentTime = getSegmentBounds(0).start;
+    video.dataset.firstFrameReady = 'true';
+    section.classList.add('has-first-frame');
+    sync();
+  }, { once: true });
+  video.addEventListener('play', () => {
+    section.classList.add('is-playing');
+    requestRender();
+    updateControlLabel();
+  });
+  video.addEventListener('pause', () => {
+    window.cancelAnimationFrame(animationFrame);
+    animationFrame = null;
+    section.classList.remove('is-playing');
+    sync();
+    updateControlLabel();
+  });
+  video.addEventListener('ended', () => playActiveSegment(true));
+  video.addEventListener('canplay', requestScrollCheck);
+  video.addEventListener('click', () => {
+    if (video.paused) {
+      userPaused = false;
+      playActiveSegment();
+    } else {
+      userPaused = true;
+      video.pause();
+    }
+  });
+  video.addEventListener('keydown', (event) => {
+    if (!['Enter', ' '].includes(event.key)) return;
+    event.preventDefault();
+    if (video.paused) {
+      userPaused = false;
+      playActiveSegment();
+    } else {
+      userPaused = true;
+      video.pause();
+    }
+  });
+
   steps.forEach((step, index) => step.addEventListener('click', () => {
-    const duration = Number.isFinite(video.duration) ? video.duration : 0;
-    play((index / Math.max(steps.length, 1)) * duration);
+    userPaused = false;
+    const regionTop = window.scrollY + scrollRegion.getBoundingClientRect().top;
+    const travel = Math.max(scrollRegion.offsetHeight - window.innerHeight, 0);
+    const targetProgress = (index + 0.5) / segmentCount;
+    window.scrollTo({
+      top: regionTop + (travel * targetProgress),
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    });
   }));
+
+  root.querySelectorAll('.scroll-cue[href="#ritual"]').forEach((cue) => {
+    cue.addEventListener('click', (event) => {
+      event.preventDefault();
+      userPaused = false;
+      scrollRegion.scrollIntoView({
+        block: 'start',
+        behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+      });
+    });
+  });
+
+  window.addEventListener('scroll', requestScrollCheck, { passive: true });
+  window.addEventListener('resize', requestScrollCheck);
+  if (video.readyState >= HTMLMediaElement.HAVE_CURRENT_DATA) {
+    video.currentTime = getSegmentBounds(0).start;
+    video.dataset.firstFrameReady = 'true';
+    section.classList.add('has-first-frame');
+  }
+  updateSteps();
+  updateControlLabel();
+  sync();
+  requestScrollCheck();
 }
 
 function initPourStories(root) {
